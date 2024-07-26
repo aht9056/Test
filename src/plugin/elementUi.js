@@ -1,0 +1,27 @@
+import Vue from 'vue'
+import {
+    Button,
+    Checkbox,
+    CheckboxGroup,
+    Dialog,
+    Form,
+    FormItem,
+    Input,
+    Icon,
+    Popover,
+    Pagination,
+    Table,
+    TableColumn,
+} from 'element-ui'
+Vue.use(Button),
+    Vue.use(Checkbox),
+    Vue.use(CheckboxGroup),
+    Vue.use(Dialog),
+    Vue.use(Form),
+    Vue.use(FormItem),
+    Vue.use(Input),
+    Vue.use(Icon),
+    Vue.use(Popover),
+    Vue.use(Pagination),
+    Vue.use(Table),
+    Vue.use(TableColumn)

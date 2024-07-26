@@ -1,18 +1,47 @@
 <template>
-  <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js + TypeScript App"/>
-  </div>
+    <div class="home">
+        <HelloWorld />
+    </div>
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
-import HelloWorld from '@/components/HelloWorld.vue'; // @ is an alias to /src
+import { defineComponent, ref, onMounted } from 'vue'
+import HelloWorld from '@/components/HelloWorld.vue' // @ is an alias to /src
 
-@Component({
-  components: {
-    HelloWorld,
-  },
+export default defineComponent({
+    name: 'HomeView',
+    components: {
+        HelloWorld,
+    },
+    setup() {
+        const createArray = <T,>(length: number, value: T): Array<T> => {
+            let result: T[] = []
+            for (let i = 0; i < length; i++) {
+                result[i] = value
+            }
+            return result
+        }
+        const user = ref<number[]>([0, 1, 2])
+        const sayHello = (person: string | number[]) => {
+            return 'Hello, ' + person
+        }
+        const sayHello2 = () => {
+            return sayHello(user.value)
+        }
+        onMounted(() => {
+            console.log(sayHello2())
+            console.log(sayHello(user.value))
+            console.log(createArray(3, 'x'))
+        })
+        return {
+            user,
+            sayHello,
+        }
+    },
 })
-export default class HomeView extends Vue {}
 </script>
+<style scoped>
+.home {
+    width: 100%;
+}
+</style>
