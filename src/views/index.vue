@@ -7,7 +7,7 @@
                 :style="{ backgroundColor: 'white' }"
             >
                 <div class="container-fluid">
-                    <div class="navbar-brand">LOGOTEST</div>
+                    <div class="navbar-brand">LOGOT</div>
                     <button
                         @click="toggleEvent()"
                         class="navbar-toggler"
