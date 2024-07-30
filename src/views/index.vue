@@ -1,52 +1,80 @@
 <template>
     <div id="app">
-        <div :ref="'routerView'" class="navbar-container">
-            <nav
-                :class="{ 'navbar-expanded': isNavbarExpanded }"
-                class="navbar navbar-expand-lg"
-                :style="{ backgroundColor: 'white' }"
-            >
-                <div class="container-fluid">
-                    <div class="navbar-brand">LOGOGOGO</div>
-                    <button
-                        @click="toggleEvent()"
-                        class="navbar-toggler"
-                        type="button"
-                        data-bs-toggle="collapse"
-                        data-bs-target="#navbarSupportedContent"
-                        aria-controls="navbarSupportedContent"
-                        aria-expanded="false"
-                        aria-label="Toggle navigation"
+        <div class="container-fluid dark-theme">
+            <div id="navbarId" class="navbar-container position-fixed w-100">
+                <nav class="navbar navbar-expand-lg p-0 w-100">
+                    <div
+                        class="d-flex justify-content-between"
+                        :class="{ 'w-100': isShowToggle }"
+                        style="height: 70px"
                     >
-                        <span class="navbar-toggler-icon"></span>
-                    </button>
+                        <div class="navbar-brand d-flex align-items-center p-1">
+                            <span>LOGO</span>
+                        </div>
+                        <div class="d-flex align-items-center p-1">
+                            <input
+                                v-show="isShowToggle"
+                                @click="toggleEvent()"
+                                type="checkbox"
+                                role="button"
+                                class="menu"
+                                data-bs-toggle="collapse"
+                                data-bs-target="#navbarSupportedContent"
+                                aria-controls="navbarSupportedContent"
+                                aria-expanded="false"
+                                aria-label="Toggle navigation"
+                            />
+                            <!-- <button
+                                @click="toggleEvent()"
+                                class="navbar-toggler"
+                                type="button"
+                                data-bs-toggle="collapse"
+                                data-bs-target="#navbarSupportedContent"
+                                aria-controls="navbarSupportedContent"
+                                aria-expanded="false"
+                                aria-label="Toggle navigation"
+                            >
+                                <span class="navbar-toggler-icon"></span>
+                            </button> -->
+                        </div>
+                    </div>
                     <div
                         class="collapse navbar-collapse"
+                        :class="{
+                            ' d-flex justify-content-center': !isShowToggle,
+                        }"
+                        :style="{ height: !isShowToggle ? '70px' : 'auto' }"
                         id="navbarSupportedContent"
                     >
-                        <ul class="navbar-nav">
-                            <li class="nav-item">
+                        <ul class="navbar-nav h-100">
+                            <li
+                                class="nav-item justify-content-center align-items-center"
+                            >
                                 <router-link
                                     class="nav-link active"
                                     aria-current="page"
                                     to="/home"
-                                    >數位行銷</router-link
+                                    >首頁</router-link
                                 >
                             </li>
-                            <li class="nav-item">
+                            <li
+                                class="nav-item justify-content-center align-items-center"
+                            >
                                 <router-link
                                     class="nav-link active"
                                     aria-current="page"
                                     to="/about"
-                                    >網站設計</router-link
+                                    >所有商品</router-link
                                 >
                             </li>
-                            <li class="nav-item">
+                            <li
+                                class="nav-item justify-content-center align-items-center"
+                            >
                                 <router-link
                                     class="nav-link active"
                                     aria-current="page"
                                     to="/vuex"
-                                    >VuexTry</router-link
+                                    >頁面3</router-link
                                 >
                             </li>
                             <li
@@ -54,7 +82,7 @@
                                 style="display: block; margin: 0 auto"
                             >
                                 <a class="nav-link dropdown-icon" href="#">
-                                    下拉式
+                                    頁面4
                                 </a>
                                 <ul class="dropdown-menu">
                                     <li class="dropdown-li">
@@ -74,7 +102,9 @@
                                     </li>
                                 </ul>
                             </li>
-                            <li class="nav-item">
+                            <li
+                                class="nav-item justify-content-center align-items-center"
+                            >
                                 <router-link
                                     class="nav-link active"
                                     aria-current="page"
@@ -82,20 +112,25 @@
                                     >關於</router-link
                                 >
                             </li>
-                            <li class="nav-item">
+                            <li
+                                class="nav-item justify-content-center align-items-center"
+                            >
                                 <router-link
                                     class="nav-link active"
                                     aria-current="page"
                                     to="/about"
-                                    >會員管理系統</router-link
+                                    >頁面5</router-link
                                 >
                             </li>
                         </ul>
                     </div>
-                </div>
-            </nav>
+                </nav>
+            </div>
         </div>
-        <div class="router">
+        <div
+            :ref="'routerViewRef'"
+            class="router position-relative d-flex justify-content-center align-items-start"
+        >
             <router-view />
         </div>
     </div>
@@ -104,112 +139,78 @@
 export default {
     data() {
         return {
-            isNavbarExpanded: false,
-            isTogggleExpanded: false,
-            arr: ['a'],
+            navbarHeight: 0,
+            isShowToggle: false,
         }
     },
     mounted() {
+        this.observeNavbarHeight()
         window.addEventListener('resize', this.handleResize)
+        this.handleResize()
     },
-    destroyed() {
+    beforeDestroy() {
         window.removeEventListener('resize', this.handleResize)
+        this.unobserveNavbarHeight()
     },
     methods: {
         toggleEvent() {
-            if (this.$refs.routerView.style.height != '330px') {
-                this.$refs.routerView.style.height = '330px'
-                this.isTogggleExpanded = true
-            } else {
-                this.$refs.routerView.style.height = '60px'
-                this.isTogggleExpanded = false
-            }
             this.handleResize()
         },
         handleResize() {
             const windowWidth = window.innerWidth
-            console.log('当前窗口宽度：' + windowWidth + 'px')
             if (windowWidth >= 992) {
-                // this.isTogggleExpanded = false;
-                this.$refs.routerView.style.height = '70px'
-            } else if (this.isTogggleExpanded == false) {
-                this.$refs.routerView.style.height = '60px'
-            } else if (this.isTogggleExpanded == true) {
-                this.$refs.routerView.style.height = '330px'
+                this.isShowToggle = false
+            } else {
+                this.isShowToggle = true
+            }
+        },
+        observeNavbarHeight() {
+            const navbar = document.getElementById('navbarId')
+            this.resizeObserver = new ResizeObserver(entries => {
+                for (let entry of entries) {
+                    this.navbarHeight = entry.contentRect.height
+                    this.$refs.routerViewRef.style.top =
+                        this.navbarHeight + 'px'
+                }
+            })
+            this.resizeObserver.observe(navbar)
+        },
+        unobserveNavbarHeight() {
+            if (this.resizeObserver) {
+                this.resizeObserver.disconnect()
             }
         },
     },
 }
 </script>
 
-<style lang="scss">
-@import '../scss/GlobalStyles.scss';
+<style lang="scss" scoped>
+@import '/src/scss/hamburgerBtn.scss';
 #app {
     font-family: 'Noto Sans TC', sans-serif;
 }
 .navbar-container {
-    position: fixed;
     top: 0;
     left: 0;
-    width: 100%;
     z-index: 1000;
-    @media (max-width: 991.98px) {
-    }
-    .navbar {
-        padding: 0%;
-        height: 70px;
-        top: 0;
-        left: 0;
-        width: 100%;
-        z-index: 1000;
-        @media (max-width: 991.98px) {
-            height: 60px;
-        }
-    }
-    .container-fluid {
-        border-bottom: 1px solid #f5f5f5;
-        position: relative;
-        height: 100%;
-        background-color: white; /* 初始透明背景色 */
-        @media (max-width: 991.98px) {
-            height: auto;
-            padding-top: 6px;
-            padding-bottom: 6px;
-        }
-    }
+    background-color: var(--color-navbar-background);
+    border-bottom: 1px solid rgba(206, 201, 201, 0.722);
     .navbar-brand {
-        position: absolute;
-        @media (max-width: 991.98px) {
-            position: relative;
-        }
+        color: var(--color-navbar-text);
     }
-    .collapse {
-        height: 100%;
-        @media (min-width: 992px) {
-            height: 100%;
-            display: flex;
-            justify-content: center;
-        }
-    }
-    .navbar-expanded {
-        transform: scaleY(1.1);
-        background-color: var(--color-navbar); /* 滚动时改变的背景色 */
+    .navbar-toggler {
+        border: none;
+        // border-color: var(--color-navbar-text);
+        // color: var(--color-navbar-hover-background);
     }
     .navbar-nav {
-        height: 100%;
-        @media (max-width: 991.98px) {
-            height: auto;
-        }
         .nav-item {
             width: 150px;
-            justify-content: center;
-            align-items: center;
-
             @media (max-width: 991.98px) {
                 width: 100%;
             }
             .nav-link {
-                font-size: 20px;
+                font-size: 22px;
                 font-weight: 900;
                 width: 100%;
                 height: 100%;
@@ -218,7 +219,7 @@ export default {
                 align-items: center;
                 transition: color 0.3s ease;
                 position: relative;
-                color: black;
+                color: var(--color-navbar-text);
                 /* 第二个 ::after 三角形样式 */
                 &.dropdown-icon::before {
                     content: '';
@@ -229,7 +230,7 @@ export default {
                     width: 0;
                     height: 0;
                     border-top: 5px solid transparent;
-                    border-left: 7px solid black; /* 三角形颜色 */
+                    border-left: 7px solid var(--color-navbar-text); /* 三角形颜色 */
                     border-bottom: 5px solid transparent;
                     transition: transform 0.3s ease;
                 }
@@ -276,7 +277,6 @@ export default {
         min-width: 100%;
         overflow: hidden; /* 隐藏溢出内容 */
     }
-
     .dropdown:hover .dropdown-menu {
         opacity: 1;
         max-height: 200px; /* 设置菜单最大高度，根据实际情况调整 */
@@ -306,15 +306,16 @@ export default {
         }
     }
     .dropdown-item {
-        --bs-dropdown-link-active-bg: white;
+        --bs-dropdown-link-active-bg: var(--color-navbar-hover-background);
         display: flex;
         align-items: center;
         justify-content: center;
         font-size: 20px;
         height: 40px;
         padding: 0%;
+        background-color: var(--color-navbar-background);
         min-width: 100%; /* 使下拉菜单宽度与父元素相同 */
-        color: black;
+        color: var(--color-navbar-text);
         transition: color 0.3s ease;
         &:hover {
             color: var(--color-primary);
@@ -323,16 +324,12 @@ export default {
             color: var(--color-primary);
         }
     }
-    /* 基本的字体颜色 */
-    .navbar-nav .nav-link {
-        color: black; /* 设置基本的字体颜色 */
-    }
     /* 悬停时的颜色 */
     .navbar-nav .nav-item:hover .nav-link {
         color: var(--color-primary);
     }
     .navbar-nav :hover.nav-item {
-        background-color: #f5f5f5;
+        background-color: var(--color-navbar-hover-background);
     }
     /* 聚焦时的颜色 */
     .navbar-nav .nav-item:focus-within .nav-link {
@@ -340,11 +337,6 @@ export default {
     }
 }
 .router {
-    position: relative;
-    display: flex;
-    justify-content: center;
-    top: 70px;
-    align-items: flex-start;
     transition: margin-top 0.3s ease;
 }
 </style>

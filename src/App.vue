@@ -2,15 +2,14 @@
     <router-view></router-view>
 </template>
 
-
 <script>
 export default {
-  components: {
-  },
-};
+    components: {},
+}
 </script>
 
-<style scoped>
+<style lang="scss">
+@import '/src/scss/GlobalStyles.scss';
 /* #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
