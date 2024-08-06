@@ -1,33 +1,23 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import axios from 'axios'
 Vue.use(Vuex)
-const modulePurchaseDog = {
+const moduleUserInfo = {
     state: {
-        dog: 999,
+        user: null,
+        notVerifyUser: null,
     },
-    mutations: {},
-    getters: {},
-    actions: {},
 }
 
-const modulePurchaseCar = {
-    state: {
-        car: 1000,
-    },
-    mutations: {},
-    getters: {},
-    actions: {},
-}
 export default new Vuex.Store({
-    state: {
-        total: 0,
-    },
+    state: { isLogin: false },
     actions: {},
-    mutations: {},
-    getters: {},
+    mutations: {
+        SET_IS_LOGIN(state, value) {
+            state.isLogin = value
+        },
+    },
+    getters: { isLogin: state => state.isLogin },
     modules: {
-        purchaseDog: modulePurchaseDog,
-        purchaseCar: modulePurchaseCar,
+        userInfo: moduleUserInfo,
     },
 })

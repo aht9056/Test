@@ -1,6 +1,6 @@
 <template>
     <div id="app">
-        <div class="container-fluid dark-theme">
+        <div class="container-fluid">
             <div id="navbarId" class="navbar-container position-fixed w-100">
                 <nav class="navbar navbar-expand-lg p-0 w-100">
                     <div
@@ -12,6 +12,12 @@
                             <span>LOGO</span>
                         </div>
                         <div class="d-flex align-items-center p-1">
+                            <template v-if="isShowToggle">
+                                <NavbarPopover
+                                    :isShowToggle="!isShowToggle"
+                                    @update:selected-page="goToAboutUserPage"
+                                />
+                            </template>
                             <input
                                 v-show="isShowToggle"
                                 @click="toggleEvent()"
@@ -24,18 +30,6 @@
                                 aria-expanded="false"
                                 aria-label="Toggle navigation"
                             />
-                            <!-- <button
-                                @click="toggleEvent()"
-                                class="navbar-toggler"
-                                type="button"
-                                data-bs-toggle="collapse"
-                                data-bs-target="#navbarSupportedContent"
-                                aria-controls="navbarSupportedContent"
-                                aria-expanded="false"
-                                aria-label="Toggle navigation"
-                            >
-                                <span class="navbar-toggler-icon"></span>
-                            </button> -->
                         </div>
                     </div>
                     <div
@@ -124,24 +118,38 @@
                             </li>
                         </ul>
                     </div>
+                    <template v-if="!isShowToggle">
+                        <NavbarPopover
+                            :isShowToggle="!isShowToggle"
+                            @update:selected-page="goToAboutUserPage"
+                        />
+                    </template>
                 </nav>
             </div>
         </div>
         <div
             :ref="'routerViewRef'"
-            class="router position-relative d-flex justify-content-center align-items-start"
+            class="router position-relative d-flex justify-content-center align-items-start w-auto"
         >
             <router-view />
         </div>
     </div>
 </template>
 <script>
+import NavbarPopover from '../components/index/NavbarPopover.vue'
 export default {
+    components: {
+        NavbarPopover,
+    },
     data() {
         return {
             navbarHeight: 0,
             isShowToggle: false,
+            popoverVisible: false,
         }
+    },
+    beforeMount() {
+        // this.$router.push('home')
     },
     mounted() {
         this.observeNavbarHeight()
@@ -168,9 +176,11 @@ export default {
             const navbar = document.getElementById('navbarId')
             this.resizeObserver = new ResizeObserver(entries => {
                 for (let entry of entries) {
-                    this.navbarHeight = entry.contentRect.height
-                    this.$refs.routerViewRef.style.top =
-                        this.navbarHeight + 'px'
+                    requestAnimationFrame(() => {
+                        this.navbarHeight = entry.contentRect.height
+                        this.$refs.routerViewRef.style.top =
+                            this.navbarHeight + 'px'
+                    })
                 }
             })
             this.resizeObserver.observe(navbar)
@@ -179,6 +189,9 @@ export default {
             if (this.resizeObserver) {
                 this.resizeObserver.disconnect()
             }
+        },
+        goToAboutUserPage(path) {
+            this.$router.push(path)
         },
     },
 }
@@ -337,6 +350,7 @@ export default {
     }
 }
 .router {
+    background-color: var(--color-content-background);
     transition: margin-top 0.3s ease;
 }
 </style>

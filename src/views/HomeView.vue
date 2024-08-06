@@ -28,11 +28,7 @@ export default defineComponent({
         const sayHello2 = () => {
             return sayHello(user.value)
         }
-        onMounted(() => {
-            console.log(sayHello2())
-            console.log(sayHello(user.value))
-            console.log(createArray(3, 'x'))
-        })
+        onMounted(() => {})
         return {
             user,
             sayHello,

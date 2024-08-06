@@ -1,0 +1,113 @@
+.layout {
+    color: var(--color-content-text);
+    width: 50%;
+    * {
+        color: inherit;
+    }
+    min-width: 450px;
+    @media (max-width: 450px) {
+        min-width: 300px;
+        width: 300px;
+    }
+}
+h1,
+h2,
+h3 {
+    font-weight: 900;
+}
+
+.card {
+    background: var(--color-content-background);
+    padding: calc(4 * 0.5rem);
+    border-radius: var(--size-radius);
+    border: 3px solid var(--color-primary);
+    box-shadow: 0.5rem 0.5rem 0 var(--color-content-shadow);
+}
+
+.l-design-width {
+    padding: 1rem;
+}
+
+.input {
+    position: relative;
+    margin-top: 12px;
+    color: var(--color-content-text);
+    &__label {
+        position: absolute;
+        left: 0;
+        top: 0;
+        padding: calc(var(--size-bezel) * 0.75)
+            calc(var(--size-bezel) * 0.5 + 1px);
+        margin: calc(var(--size-bezel) * 0.75 + 3px)
+            calc(var(--size-bezel) * 0.5 - 1px);
+        white-space: nowrap;
+        transform: translate(0, 0);
+        transform-origin: 0 0;
+        background: var(--color-content-background);
+        transition: transform 120ms ease-in;
+        font-weight: bold;
+        line-height: 1.2;
+    }
+    &__field {
+        font-weight: 900;
+        box-sizing: border-box;
+        display: block;
+        width: 100%;
+        border: 3px solid var(--color-content-text);
+        padding: calc(var(--size-bezel) * 1.5) var(--size-bezel);
+        background: transparent;
+        border-radius: var(--size-radius);
+        outline: none;
+        &:focus,
+        &:not(:placeholder-shown) {
+            & + .input__label {
+                transform: translate(-0.25rem, -65%) scale(0.8);
+            }
+            border: 3px solid var(--color-primary);
+        }
+    }
+}
+.register_link {
+    cursor: pointer;
+    color: var(--color-primary);
+}
+.line {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    &::before,
+    &::after {
+        content: '';
+        flex: 1;
+        border-bottom: 1px solid var(--color-primary);
+    }
+}
+.google {
+    &:hover {
+        & span {
+            color: white;
+        }
+    }
+}
+button {
+    padding: var(--size-bezel) calc(var(--size-bezel) * 2);
+    background: var(--color-primary);
+    border: none;
+    border-radius: var(--size-radius);
+    font-weight: 900;
+}
+.errorhint {
+    color: red;
+}
+.eye {
+    position: absolute;
+    right: 5px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    :hover {
+        transform: scale(1.05);
+        transition: transform 0.2s ease;
+    }
+}

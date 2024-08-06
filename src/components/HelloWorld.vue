@@ -1,6 +1,5 @@
 <template>
     <div class="hello">
-        <h1>{{ msg }}</h1>
         <div
             id="carouselExampleDark"
             class="carousel carousel-dark slide"

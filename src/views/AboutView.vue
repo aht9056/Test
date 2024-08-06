@@ -14,6 +14,7 @@
                     :close-on-click-modal="false"
                     :close-on-press-escape="false"
                     width="30%"
+                    style="min-width: 250px"
                     @close="initTempData(), getshowTableData()"
                 >
                     <form class="row g-3 needs-validation" novalidate>
