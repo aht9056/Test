@@ -105,12 +105,8 @@ const emailIsRegister = async email => {
     }
 }
 const sendResetEmail = async email => {
-    const actionCodeSettings = {
-        url: 'http://localhost:8080/Test/#/emailoption',
-        handleCodeInApp: true,
-    }
     try {
-        await sendPasswordResetEmail(auth, email, actionCodeSettings)
+        await sendPasswordResetEmail(auth, email)
         console.log('重置密碼連結已發送，請檢查你的信箱。')
     } catch (error) {
         console.error('Error during sign in:', error.code, error.message)
