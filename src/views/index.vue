@@ -57,8 +57,8 @@
                                 <router-link
                                     class="nav-link active"
                                     aria-current="page"
-                                    to="/about"
-                                    >所有商品</router-link
+                                    to="/booklist"
+                                    >中文</router-link
                                 >
                             </li>
                             <li
@@ -131,7 +131,7 @@
             :ref="'routerViewRef'"
             class="router position-relative d-flex justify-content-center align-items-start w-auto"
         >
-            <router-view />
+            <router-view ref="routerView" />
         </div>
     </div>
 </template>
@@ -174,12 +174,18 @@ export default {
         },
         observeNavbarHeight() {
             const navbar = document.getElementById('navbarId')
+            const booklistfilterArea =
+                this.$refs.routerView.$el.querySelector('#filterArea')
             this.resizeObserver = new ResizeObserver(entries => {
                 for (let entry of entries) {
                     requestAnimationFrame(() => {
                         this.navbarHeight = entry.contentRect.height
                         this.$refs.routerViewRef.style.top =
                             this.navbarHeight + 'px'
+                        if (booklistfilterArea) {
+                            booklistfilterArea.style.top =
+                                this.navbarHeight + 5 + 'px'
+                        }
                     })
                 }
             })

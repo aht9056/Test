@@ -1,0 +1,10 @@
+.container {
+    background-color: var(--color-content-background);
+    padding: 5px;
+}
+.row [class*='col-'] {
+    padding: 5px;
+}
+.layout {
+    color: var(--color-content-text);
+}

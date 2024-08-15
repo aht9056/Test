@@ -2,6 +2,7 @@
     --color-light: white;
     --color-signal: #212121;
     --color-primary: #f99d09;
+    --color-secondary: #f7bd60;
 
     --color-navbar: white;
     --color-navbar-background: white;
@@ -11,6 +12,15 @@
     --color-content-background: white;
     --color-content-text: #212121;
     --color-content-shadow: #7c7a7a;
+
+    --color-content-filterarea: var(--color-secondary);
+    --color-content-filterarea-collapse_btn_type: white;
+    --color-content-filterarea-collapse_btn_type_hover: var(--color-primary);
+    --color-content-filterarea-collapse_type_subType: white;
+
+    --color-content-bookList: var(--color-primary);
+    --color-content-bookList-background: white;
+    --color-content-bookList-line: #9a9898;
 
     --size-bezel: 0.5rem;
     --size-radius: 4px;
@@ -23,4 +33,13 @@
     --color-content-background: #413f3f;
     --color-content-text: white;
     --color-content-shadow: #212121;
+
+    --color-content-filterarea: var(--color-primary);
+    --color-content-filterarea-collapse_btn_type: #4a4646;
+    --color-content-filterarea-collapse_btn_type_hover: var(--color-secondary);
+    --color-content-filterarea-collapse_type_subType: #4a4646;
+
+    --color-content-bookList: var(--color-primary);
+    --color-content-bookList-background: #5c5a5a;
+    --color-content-bookList-line: #9a9898;
 }

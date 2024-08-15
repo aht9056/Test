@@ -28,6 +28,11 @@ const routes: Array<RouteConfig> = [
                 component: () => import('../views/VuexTry.vue'),
             },
             {
+                path: '/booklist',
+                name: 'booklist',
+                component: () => import('../views/booklist/bookList.vue'),
+            },
+            {
                 path: '/login',
                 name: 'login',
                 component: () => import('../views/aboutuser/Login.vue'),
