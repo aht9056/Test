@@ -145,10 +145,10 @@
                                     <img :src="item.photo" />
                                 </div>
                                 <div
-                                    class="col-lg-10 col-md-6 col-sm-12 col-6 d-flex flex-column info"
+                                    class="col-lg-10 col-md-6 col-sm-12 col-6 d-flex flex-column justify-content-evenly info"
                                 >
                                     <div
-                                        class="d-flex justify-content-center title p-1 flex-grow-1"
+                                        class="d-flex justify-content-center title p-1"
                                     >
                                         <a herf="#" :title="item.name">
                                             {{ item.name }}

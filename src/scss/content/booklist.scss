@@ -7,7 +7,7 @@
         }
     }
     .keyword {
-        font-size: 20px;
+        font-size: 1.2rem;
     }
     .booklist_content {
         border-bottom: 1px solid var(--color-content-bookList-line);
@@ -41,7 +41,7 @@
             background-color: red; /* 背景颜色 */
             color: white; /* 字体颜色 */
             padding: 5px 10px; /* 内边距 */
-            font-size: 12px; /* 字体大小 */
+            font-size: 0.9rem; /* 字体大小 */
             border-radius: 3px; /* 可选的圆角效果 */
         }
     }
@@ -55,7 +55,7 @@
         a {
             color: var(--color-primary);
             cursor: pointer;
-            font-size: 18px;
+            font-size: 1.2rem;
             line-height: 22px;
             height: 100%;
             overflow-y: hidden;
@@ -108,6 +108,7 @@
     .shoppingCar_btn {
         color: var(--color-content-text);
         border: 2px solid transparent;
+        font-size: 1.2rem;
         border-radius: 5px;
         background-clip: padding-box, border-box;
         background-origin: padding-box, border-box;
