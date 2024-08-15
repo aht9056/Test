@@ -122,104 +122,116 @@
                     </div>
                 </div>
             </div>
-            <div class="col-lg-10 col-md-12 col-sm-12 booklist">
-                <div class="row gx-0">
-                    <div
-                        v-for="item in bookListInfo"
-                        class="col-lg-12 col-md-6 col-sm-6 col-12 booklist_content"
-                    >
-                        <div class="row gx-0">
-                            <div
-                                class="col-lg-2 col-md-6 col-sm-12 col-6 p-1 photo d-flex justify-content-center align-items-center"
-                            >
-                                <div v-if="item.discount != null" class="badge">
-                                    <span class="fs-6">{{
-                                        item.discount
-                                    }}</span>
-                                    折
-                                </div>
-                                <img :src="item.photo" />
-                            </div>
-                            <div
-                                class="col-lg-10 col-md-6 col-sm-12 col-6 d-flex flex-column info"
-                            >
+            <div class="col-lg-10 col-md-12 col-sm-12">
+                <div class="booklist">
+                    <div class="row gx-0">
+                        <div
+                            v-for="item in bookListInfo"
+                            class="col-lg-12 col-md-6 col-sm-6 col-12 booklist_content"
+                        >
+                            <div class="row gx-0">
                                 <div
-                                    class="d-flex justify-content-center title p-1 flex-grow-1"
+                                    class="col-lg-2 col-md-6 col-sm-12 col-6 p-1 photo d-flex justify-content-center align-items-center"
                                 >
-                                    <a herf="#" :title="item.name">
-                                        {{ item.name }}
-                                    </a>
-                                </div>
-
-                                <div class="d-flex description">
-                                    <div>
-                                        {{ item.description }}
-                                    </div>
-                                </div>
-                                <div class="d-flex author">
-                                    作者:
-                                    <span v-for="name in item.author">{{
-                                        name
-                                    }}</span>
-                                </div>
-                                <div class="d-flex justify-content-end stock">
-                                    <span>
-                                        庫存:
-                                        <span class="keyword">{{
-                                            item.stock
-                                        }}</span></span
+                                    <div
+                                        v-if="item.discount != null"
+                                        class="badge"
                                     >
-                                </div>
-                                <div class="d-flex justify-content-end price">
-                                    <span
-                                        :style="
+                                        <span class="fs-6">{{
                                             item.discount
-                                                ? 'text-decoration: line-through; text-decoration-color: red;'
-                                                : ''
-                                        "
-                                        >售價:<span
-                                            class="keyword"
-                                            :style="{
-                                                color: !item.discount
-                                                    ? '#FF2D2D'
-                                                    : '',
-                                            }"
-                                            >{{ item.price }}</span
-                                        >元</span
-                                    >
-                                    <span v-show="item.discount"
-                                        >優惠價:<span
-                                            class="keyword"
-                                            style="color: #ff2d2d"
-                                            >{{
-                                                (
-                                                    (item.price *
-                                                        item.discount) /
-                                                    100
-                                                ).toFixed(0)
-                                            }}</span
-                                        >元</span
-                                    >
+                                        }}</span>
+                                        折
+                                    </div>
+                                    <img :src="item.photo" />
                                 </div>
                                 <div
-                                    class="d-flex justify-content-between other"
+                                    class="col-lg-10 col-md-6 col-sm-12 col-6 d-flex flex-column info"
                                 >
-                                    <div class="d-flex">
-                                        <span
-                                            v-for="tag in item.saleTag"
-                                            class="sale_tag"
-                                        >
-                                            #{{ tag }}&emsp;
-                                        </span>
+                                    <div
+                                        class="d-flex justify-content-center title p-1 flex-grow-1"
+                                    >
+                                        <a herf="#" :title="item.name">
+                                            {{ item.name }}
+                                        </a>
                                     </div>
-                                    <button class="shoppingCar_btn">
-                                        <i class="bi bi-cart2"></i
-                                        >&ensp;加入購物車
-                                    </button>
+
+                                    <div class="d-flex description">
+                                        <div>
+                                            {{ item.description }}
+                                        </div>
+                                    </div>
+                                    <div class="d-flex author">
+                                        作者:
+                                        <span v-for="name in item.author">{{
+                                            name
+                                        }}</span>
+                                    </div>
+                                    <div
+                                        class="d-flex justify-content-end stock"
+                                    >
+                                        <span>
+                                            庫存:
+                                            <span class="keyword">{{
+                                                item.stock
+                                            }}</span></span
+                                        >
+                                    </div>
+                                    <div
+                                        class="d-flex justify-content-end price"
+                                    >
+                                        <span
+                                            :style="
+                                                item.discount
+                                                    ? 'text-decoration: line-through; text-decoration-color: red;'
+                                                    : ''
+                                            "
+                                            >售價:<span
+                                                class="keyword"
+                                                :style="{
+                                                    color: !item.discount
+                                                        ? '#FF2D2D'
+                                                        : '',
+                                                }"
+                                                >{{ item.price }}</span
+                                            >元</span
+                                        >
+                                        <span v-show="item.discount"
+                                            >優惠價:<span
+                                                class="keyword"
+                                                style="color: #ff2d2d"
+                                                >{{
+                                                    (
+                                                        (item.price *
+                                                            item.discount) /
+                                                        100
+                                                    ).toFixed(0)
+                                                }}</span
+                                            >元</span
+                                        >
+                                    </div>
+                                    <div
+                                        class="d-flex justify-content-between other"
+                                    >
+                                        <div class="d-flex">
+                                            <span
+                                                v-for="tag in item.saleTag"
+                                                class="sale_tag"
+                                            >
+                                                #{{ tag }}&emsp;
+                                            </span>
+                                        </div>
+                                        <button class="shoppingCar_btn">
+                                            <i class="bi bi-cart2"></i
+                                            >&ensp;加入購物車
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
+                </div>
+                <div>
+                    <pagination></pagination>
                 </div>
             </div>
         </div>
@@ -227,9 +239,13 @@
 </template>
 
 <script>
+import pagination from '../../components/content/pagination.vue'
 import { typeInfo } from '../../data/typeInfo.js'
 import { bookList } from '../../data/bookList.js'
 export default {
+    components: {
+        pagination,
+    },
     data() {
         return {
             collapseFilterStatus: false,
