@@ -127,3 +127,19 @@
         cursor: pointer;
     }
 }
+.el-dropdown-link {
+    color: var(--color-content-text);
+}
+.el-dropdown-menu {
+    margin: 0px;
+    padding: 0px;
+    border: 0px;
+}
+.el-dropdown-menu__item {
+    color: var(--color-content-text);
+    background-color: var(--color-navbar-hover-background);
+    &:hover {
+        color: var(--color-primary);
+        background-color: var(--color-navbar-hover-background);
+    }
+}

@@ -123,6 +123,20 @@
                 </div>
             </div>
             <div class="col-lg-10 col-md-12 col-sm-12">
+                <div>
+                    排序:
+                    <el-dropdown trigger="click">
+                        <span class="el-dropdown-link">
+                            {{ sort
+                            }}<i class="el-icon-arrow-down el-icon--right"></i>
+                        </span>
+                        <el-dropdown-menu slot="dropdown">
+                            <el-dropdown-item v-for="item in sortType">{{
+                                item
+                            }}</el-dropdown-item>
+                        </el-dropdown-menu>
+                    </el-dropdown>
+                </div>
                 <div class="booklist">
                     <div class="row gx-0">
                         <div
@@ -251,6 +265,14 @@ export default {
             collapseFilterStatus: false,
             collapseBtnType: [],
             bookListInfo: [],
+            sortType: [
+                '熱銷中',
+                '價格最高',
+                '價格最低',
+                '最早發行',
+                '最晚發行',
+            ],
+            sort: '熱銷中',
         }
     },
     methods: {
