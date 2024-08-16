@@ -91,7 +91,7 @@
                                         ) in item.subType"
                                         class="form-check m-0 p-1 d-flex"
                                     >
-                                        <div class="flex-grow-1">
+                                        <div>
                                             <input
                                                 type="checkbox"
                                                 class="filter_checkbox"
