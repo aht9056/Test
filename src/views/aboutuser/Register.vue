@@ -223,7 +223,6 @@ export default {
                 const result = await signInWithGoogle()
                 this.$store.state.userInfo.user = result.user
                 //跳轉頁面
-                localStorage.setItem('userInfo', JSON.stringify(result.user))
                 this.$store.commit('SET_IS_LOGIN', true)
                 this.$router.push('/home')
             } catch (error) {

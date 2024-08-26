@@ -94,6 +94,7 @@
 </template>
 
 <script>
+import api from '@/axios/axios.ts'
 import {
     signInWithGoogle,
     signInWithEmail,
@@ -119,12 +120,27 @@ export default {
             try {
                 const result = await signInWithGoogle()
                 this.$store.state.userInfo.user = result.user
+                this.checkUid()
                 //跳轉頁面
-                localStorage.setItem('userInfo', JSON.stringify(result.user))
                 this.$store.commit('SET_IS_LOGIN', true)
                 this.$router.push('/home')
             } catch (error) {
                 console.error('登入錯誤: ', error)
+            }
+        },
+        async checkUid() {
+            try {
+                const response = await api.post('/api/checkPermission', {
+                    uid: this.$store.state.userInfo.user.uid,
+                })
+                if (response.data.success) {
+                    this.result = response.data.exists
+                    console.log(this.result)
+                } else {
+                    console.error('Failed to check UID:', response.data.message)
+                }
+            } catch (error) {
+                console.error('Error checking UID:', error)
             }
         },
         async loginWithEmail() {
@@ -142,11 +158,8 @@ export default {
                         this.$router.push('emailverify')
                     } else {
                         this.$store.state.userInfo.user = result.user
+                        await this.checkUid(result.user)
                         //跳轉頁面
-                        localStorage.setItem(
-                            'userInfo',
-                            JSON.stringify(result.user),
-                        )
                         this.$store.commit('SET_IS_LOGIN', true)
                         this.$router.push('/home')
                     }

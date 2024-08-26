@@ -7,6 +7,11 @@ const moduleUserInfo = {
         notVerifyUser: null,
     },
 }
+const moduleGeneralInfo = {
+    state: {
+        typeList: {},
+    },
+}
 
 export default new Vuex.Store({
     state: { isLogin: false },
@@ -19,5 +24,6 @@ export default new Vuex.Store({
     getters: { isLogin: state => state.isLogin },
     modules: {
         userInfo: moduleUserInfo,
+        generalInfo: moduleGeneralInfo,
     },
 })

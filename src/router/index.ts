@@ -23,11 +23,6 @@ const routes: Array<RouteConfig> = [
                 component: () => import('../views/AboutView.vue'),
             },
             {
-                path: '/vuex',
-                name: 'vuex',
-                component: () => import('../views/VuexTry.vue'),
-            },
-            {
                 path: '/login',
                 name: 'login',
                 component: () => import('../views/aboutuser/Login.vue'),
@@ -61,9 +56,16 @@ const routes: Array<RouteConfig> = [
         ],
     },
     {
-        path: '/Start',
-        name: 'Start',
-        component: () => import('../views/Start.vue'),
+        path: '/publisher',
+        name: 'publisher',
+        component: () => import('../views/Publisher.vue'),
+        children: [
+            {
+                path: 'addBook',
+                name: 'addBook',
+                component: () => import('../views/publisher/AddBook.vue'),
+            },
+        ],
     },
 ]
 

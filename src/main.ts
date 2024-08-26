@@ -13,14 +13,14 @@ import 'bootstrap'
 import 'bootstrap-icons/font/bootstrap-icons.css'
 // 引入 Element UI 组件
 import '@/plugin/elementUi.js'
-import Swal from '@/plugin/sweetalert2'
+import customSwal from '@/plugin/sweetalert2'
 // 使用 BootstrapVue
 Vue.use(BootstrapVue)
 Vue.use(IconsPlugin)
 
 Vue.config.productionTip = false
 
-Vue.prototype.$swal = Swal
+Vue.prototype.$swal = customSwal
 new Vue({
     router,
     store,

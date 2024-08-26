@@ -66,9 +66,14 @@ export default {
                 return
             }
 
-            const queryParams = new URLSearchParams(window.location.search)
+            const hash = window.location.hash.substring(1) // 移除 `#`
+            const queryParams = new URLSearchParams(hash.split('?')[1]) // 提取 `?` 之后的部分
+
             const oobCode = queryParams.get('oobCode')
             const apiKey = queryParams.get('apiKey')
+
+            console.log(oobCode)
+            console.log(apiKey)
 
             if (!oobCode || !apiKey) {
                 this.errorMessage = '無效的重置密碼請求'
@@ -85,9 +90,8 @@ export default {
             }
         },
         checkPassword() {
-            const password = this.password
+            const password = this.newPassword
             const regex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,24}$/
-
             if (!regex.test(password)) {
                 this.passwordError =
                     '※ 密碼需由8~24個大小寫字母或數字組成，並包含至少一個字母和數字'
