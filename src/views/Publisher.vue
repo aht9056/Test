@@ -3,7 +3,7 @@
         <div class="row gx-0">
             <h1>出版商管理系統</h1>
         </div>
-        <div class="row gx-0 flex-grow-1">
+        <div v-if="dataLoaded" class="row gx-0 flex-grow-1">
             <div class="col-lg-2 col-md-12 col-sm-12 col-12 options">
                 <div class="d-flex w-100 flex-wrap flex-column">
                     <div
@@ -39,9 +39,12 @@
     </div>
 </template>
 <script>
+import Cookies from 'js-cookie'
+import api from '@/axios/axios.ts'
 export default {
     data() {
         return {
+            dataLoaded: false,
             nowPage: '',
         }
     },
@@ -52,11 +55,53 @@ export default {
                 this.$router.push(`/publisher/${target}`)
             }
         },
+        async getInitData() {
+            const result = await this.checkUid()
+            if (result) {
+                await this.getTypeList()
+                this.dataLoaded = result
+                this.goToPage('addBook')
+            }
+        },
+        async checkUid() {
+            const uid = JSON.parse(Cookies.get('accountInfo')).uid
+            const accountPermission = JSON.parse(
+                Cookies.get('accountPermission'),
+            )
+            try {
+                const response = await api.post('/api/checkPermission', {
+                    uid: uid,
+                })
+                if (response.data.success) {
+                    if (response.data.exists == accountPermission) return true
+                } else {
+                    console.error('Failed to check UID:', response.data.message)
+                    return false
+                }
+            } catch (error) {
+                console.error('Error checking UID:', error)
+                return false
+            }
+        },
+        async getTypeList() {
+            try {
+                const response = await api.get('/api/getTypeList')
+                if (response.data.success) {
+                    this.result = response.data.typeList
+                    this.$store.state.generalInfo.typeList =
+                        response.data.typeList
+                } else {
+                    console.error('Failed to check UID:', response.data.message)
+                }
+            } catch (error) {
+                console.error('Error checking UID:', error)
+            }
+        },
     },
-    beforeMount() {},
-    mounted() {
-        this.goToPage('addBook')
+    beforeMount() {
+        this.getInitData()
     },
+    mounted() {},
 }
 </script>
 <style lang="scss" scoped>

@@ -222,11 +222,45 @@ export default {
             try {
                 const result = await signInWithGoogle()
                 this.$store.state.userInfo.user = result.user
+                this.saveAccountInfo(this.$store.state.userInfo.user)
+                await this.checkUid(result.user)
                 //跳轉頁面
                 this.$store.commit('SET_IS_LOGIN', true)
                 this.$router.push('/home')
             } catch (error) {
                 console.error('登入錯誤: ', error)
+            }
+        },
+        saveAccountInfo(accountData) {
+            Cookies.set('accountInfo', JSON.stringify(accountData), {
+                expires: 7,
+                secure: false,
+                sameSite: 'Strict',
+            })
+            console.log(Cookies.get('accountInfo'))
+        },
+        async checkUid() {
+            try {
+                const response = await api.post('/api/checkPermission', {
+                    uid: this.$store.state.userInfo.user.uid,
+                })
+                if (response.data.success) {
+                    this.result = response.data.exists
+                    Cookies.set(
+                        'accountPermission',
+                        JSON.stringify(this.result),
+                        {
+                            expires: 7,
+                            secure: false,
+                            sameSite: 'Strict',
+                        },
+                    )
+                    console.log(Cookies.get('accountPermission'))
+                } else {
+                    console.error('Failed to check UID:', response.data.message)
+                }
+            } catch (error) {
+                console.error('Error checking UID:', error)
             }
         },
         togglePasswordFieldType() {

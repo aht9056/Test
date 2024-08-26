@@ -53,6 +53,7 @@
 
 <script>
 import { signOut } from '../../login/firebase'
+import Cookies from 'js-cookie'
 export default {
     data() {
         return {
@@ -86,7 +87,12 @@ export default {
         },
     },
     beforeMount() {
-        this.user = this.$store.state.userInfo.user
+        const accountInfo = Cookies.get('accountInfo')
+        if (accountInfo) {
+            this.user = JSON.parse(accountInfo)
+        } else {
+            this.user = {}
+        }
     },
 }
 </script>
