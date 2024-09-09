@@ -5,6 +5,7 @@ const moduleUserInfo = {
     state: {
         user: null,
         notVerifyUser: null,
+        userInfoData: null,
     },
 }
 const moduleGeneralInfo = {

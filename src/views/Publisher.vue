@@ -21,19 +21,27 @@
                     <div
                         class="text-decoration-none p-1 m-1 text-center text-truncate overflow-hidden text-nowrap bordergradient custom_button"
                         :class="
-                            this.nowPage === 'editTypeStructure'
+                            this.nowPage === 'requestList'
                                 ? 'selected'
                                 : 'notselected'
                         "
-                        @click="goToPage('editTypeStructure')"
-                        title="編輯類別結構"
+                        @click="goToPage('requestList')"
+                        title="新增書籍請求狀態"
                     >
-                        編輯類別結構
+                        新增書籍請求狀態
                     </div>
                 </div>
             </div>
             <div class="col-lg-10 col-md-12 col-sm-12 col-12 content">
                 <router-view></router-view>
+            </div>
+        </div>
+        <div v-else>
+            <div class="loading-overlay">
+                <div class="loading-spinner-container">
+                    <div class="loading-spinner"></div>
+                </div>
+                <div class="loading-text">資料載入中...</div>
             </div>
         </div>
     </div>
@@ -56,11 +64,24 @@ export default {
             }
         },
         async getInitData() {
-            const result = await this.checkUid()
-            if (result) {
-                await this.getTypeList()
-                this.dataLoaded = result
-                this.goToPage('addBook')
+            try {
+                const [uidResult, typeListResponse] = await Promise.all([
+                    this.checkUid(),
+                    this.getTypeList(),
+                ])
+
+                if (uidResult) {
+                    this.dataLoaded = true
+                    this.goToPage('addBook')
+                }
+
+                if (typeListResponse && typeListResponse.data.success) {
+                    this.result = typeListResponse.data.typeList
+                    this.$store.state.generalInfo.typeList =
+                        typeListResponse.data.typeList
+                }
+            } catch (error) {
+                console.error('Error during initialization:', error)
             }
         },
         async checkUid() {
@@ -68,12 +89,15 @@ export default {
             const accountPermission = JSON.parse(
                 Cookies.get('accountPermission'),
             )
+
             try {
-                const response = await api.post('/api/checkPermission', {
-                    uid: uid,
-                })
+                const response = await api.post('/api/checkPermission', { uid })
                 if (response.data.success) {
-                    if (response.data.exists == accountPermission) return true
+                    if (response.data.exists == accountPermission) {
+                        this.$store.state.userInfo.userInfoData =
+                            response.data.infoData
+                        return true
+                    }
                 } else {
                     console.error('Failed to check UID:', response.data.message)
                     return false
@@ -86,15 +110,19 @@ export default {
         async getTypeList() {
             try {
                 const response = await api.get('/api/getTypeList')
-                if (response.data.success) {
-                    this.result = response.data.typeList
-                    this.$store.state.generalInfo.typeList =
-                        response.data.typeList
-                } else {
-                    console.error('Failed to check UID:', response.data.message)
-                }
+                return response
             } catch (error) {
-                console.error('Error checking UID:', error)
+                console.error('Error fetching type list:', error)
+                return null
+            }
+        },
+        toggleTheme() {
+            var mybody = document.body
+
+            if (mybody.classList.contains('dark-theme')) {
+                mybody.classList.remove('dark-theme')
+            } else {
+                mybody.classList.add('dark-theme')
             }
         },
     },
@@ -105,6 +133,7 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
+@import '../scss/aboutuser/styles.scss';
 .position-relative {
     background-color: var(--color-content-background);
 }

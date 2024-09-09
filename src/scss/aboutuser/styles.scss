@@ -95,10 +95,37 @@ input[type='number']::-webkit-inner-spin-button {
 }
 button {
     padding: var(--size-bezel) calc(var(--size-bezel) * 2);
-    background: var(--color-primary);
+    background-color: var(--color-primary);
     border: none;
     border-radius: var(--size-radius);
     font-weight: 900;
+}
+.button_design {
+    background: none;
+    color: var(--color-content-text);
+    border: 2px solid var(--color-primary);
+    font-size: 1.2rem;
+    border-radius: 5px;
+    background-clip: padding-box, border-box;
+    background-origin: padding-box, border-box;
+    background-image: linear-gradient(
+            to right,
+            var(--color-content-background),
+            var(--color-content-background)
+        ),
+        linear-gradient(45deg, var(--color-secondary), var(--color-primary));
+    &.selected {
+        color: var(--color-primary);
+    }
+    &:hover {
+        i {
+            color: var(--color-primary);
+        }
+        color: var(--color-primary);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    cursor: pointer;
 }
 .custom_botton {
     cursor: pointer;
@@ -121,5 +148,53 @@ button {
     :hover {
         transform: scale(1.05);
         transition: transform 0.2s ease;
+    }
+}
+.modal-header {
+    background-color: var(--color-content-background);
+}
+.modal-body {
+    border-bottom-left-radius: var(--bs-modal-inner-border-radius);
+    border-bottom-right-radius: var(--bs-modal-inner-border-radius);
+    background-color: var(--color-content-background);
+}
+
+//載入中css
+.loading-overlay {
+    display: flex;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    flex-direction: column;
+}
+.loading-spinner-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    margin-top: 50px;
+    margin-bottom: 20px;
+}
+.loading-spinner {
+    border: 6px solid var(--color-content-background);
+    border-top: 6px solid var(--color-primary);
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    animation: spin 2s linear infinite;
+}
+
+.loading-text {
+    color: var(--color-content-text);
+    margin-top: 10px;
+    font-size: 48px; /* Adjust the font size */
+}
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
     }
 }

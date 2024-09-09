@@ -7,15 +7,15 @@
             popper-class="popover-style"
         >
             <div class="popover-content">
-                <template v-if="!user">
+                <div v-if="user == null">
                     <div
                         class="popover-item d-flex align-items-center btn"
                         @click="goLogin"
                     >
                         <i class="bi bi-box-arrow-in-right"></i> 登入
                     </div>
-                </template>
-                <template v-else>
+                </div>
+                <div v-else>
                     <div class="popover-item" style="cursor: auto">
                         <i class="bi bi-person-circle"></i>&emsp;{{
                             user.displayName
@@ -27,7 +27,7 @@
                     >
                         <i class="bi bi-box-arrow-in-left"></i> 登出
                     </div>
-                </template>
+                </div>
                 <div class="popover-item d-flex align-items-center btn">
                     <i class="bi bi-cart2"></i> 購物車
                 </div>
@@ -56,17 +56,32 @@ import { signOut } from '../../login/firebase'
 import Cookies from 'js-cookie'
 export default {
     data() {
-        return {
-            user: null,
-        }
+        return {}
+    },
+    computed: {
+        user() {
+            return this.$store.state.userInfo.user
+        },
     },
     methods: {
         async logout() {
             try {
-                this.user = null
                 this.$store.state.userInfo.user = null
+                this.$store.state.userInfo.userInfoData = null
+                this.$store.state.generalInfo.typeList = {}
+                Cookies.remove('uid', {
+                    secure: false,
+                    sameSite: 'Strict',
+                })
+                Cookies.remove('checkPermission', {
+                    secure: false,
+                    sameSite: 'Strict',
+                })
+                Cookies.remove('accountInfo', {
+                    secure: false,
+                    sameSite: 'Strict',
+                })
                 signOut()
-                sessionStorage.clear()
                 this.$store.commit('SET_IS_LOGIN', false)
                 this.$router.push('/home')
             } catch (error) {
@@ -88,10 +103,8 @@ export default {
     },
     beforeMount() {
         const accountInfo = Cookies.get('accountInfo')
-        if (accountInfo) {
-            this.user = JSON.parse(accountInfo)
-        } else {
-            this.user = {}
+        if (accountInfo !== undefined) {
+            this.$store.state.userInfo.user = JSON.parse(accountInfo)
         }
     },
 }

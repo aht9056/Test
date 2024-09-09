@@ -148,9 +148,6 @@ export default {
             popoverVisible: false,
         }
     },
-    beforeMount() {
-        // this.$router.push('home')
-    },
     mounted() {
         this.observeNavbarHeight()
         window.addEventListener('resize', this.handleResize)

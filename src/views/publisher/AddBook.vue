@@ -350,6 +350,7 @@ export default {
         return {
             bookData: {
                 serialNumber: '',
+                status: '審核中',
                 name: '',
                 isForiegn: false,
                 type: 'T001',
@@ -371,6 +372,16 @@ export default {
                 stock: 0,
                 discount: 80,
                 saleTag: [],
+            },
+            bookMessage: {
+                name: '',
+                serialNumber: '',
+                fixMessage: '',
+                read: false,
+                lastUpdateTime: '',
+                createTime: '',
+                option: 'addBook',
+                status: '',
             },
             nowPublisher: {
                 name: '超級出版社',
@@ -543,6 +554,8 @@ export default {
         addBook() {
             if (this.checkBookData()) {
                 this.updateSerialNumber()
+                this.bookMessage.status = '審核中'
+                this.bookMessage.name = this.bookData.name
                 this.$swal.fire({
                     title: '處理中...',
                     text: '正在上傳資料，請稍候',
@@ -567,7 +580,7 @@ export default {
                                 this.$swal.close()
                                 this.$swal.fire({
                                     title: '錯誤',
-                                    text: '上傳過程中發生錯誤，請重試',
+                                    text: '上傳過程中發生錯誤，請稍後重試',
                                     icon: 'error',
                                     confirmButtonText: '確定',
                                 })
@@ -578,49 +591,42 @@ export default {
             }
         },
         updateSerialNumber() {
-            const taiwanTime = new Date()
-                .toLocaleString('zh-TW', {
-                    timeZone: 'Asia/Taipei',
-                    year: 'numeric',
-                    month: '2-digit',
-                    day: '2-digit',
-                    hour: '2-digit',
-                    minute: '2-digit',
-                    second: '2-digit',
-                })
-                .replace(/\D/g, '')
+            const taiwanTime = new Date().toLocaleString('zh-TW', {
+                timeZone: 'Asia/Taipei',
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: false,
+            })
 
             this.bookData.serialNumber =
                 this.bookData.publisher +
                 '_' +
                 this.bookData.type +
                 '_' +
-                taiwanTime
+                taiwanTime.replace(/\D/g, '').slice(0, 14)
+            this.bookMessage.serialNumber = this.bookData.serialNumber
+            this.bookMessage.createTime = taiwanTime
+            this.bookMessage.lastUpdateTime = taiwanTime
         },
         async addToFirebase() {
             try {
-                if (
-                    !this.images.length ||
-                    !this.pdfFile ||
-                    !this.bookData.serialNumber
-                ) {
-                    console.error(
-                        'Images, PDF file, and serial number are required.',
-                    )
-                    return
-                }
-
                 const imagesBase64 = await Promise.all(
                     this.images.map(image => this.convertFileToBase64(image)),
                 )
 
                 const pdfBase64 = await this.convertFileToBase64(this.pdfFile)
 
-                const response = await api.post('/api/uploadFiles', {
+                const response = await api.post('/api/uploadAddBookRequest', {
                     images: imagesBase64,
                     pdf: pdfBase64,
                     serialNumber: this.bookData.serialNumber,
                     bookData: this.bookData,
+                    bookMessage: this.bookMessage,
+                    code: this.$store.state.userInfo.userInfoData.code,
                 })
 
                 if (response.data.success) {
@@ -630,9 +636,11 @@ export default {
                         'Error uploading files:',
                         response.data.message,
                     )
+                    return Promise.reject(response.data.message)
                 }
             } catch (error) {
                 console.error('Error in addBook method:', error)
+                return Promise.reject(error)
             }
         },
         convertFileToBase64(file) {

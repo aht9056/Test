@@ -65,6 +65,11 @@ const routes: Array<RouteConfig> = [
                 name: 'addBook',
                 component: () => import('../views/publisher/AddBook.vue'),
             },
+            {
+                path: 'requestList',
+                name: 'requestList',
+                component: () => import('../views/publisher/RequestList.vue'),
+            },
         ],
     },
 ]

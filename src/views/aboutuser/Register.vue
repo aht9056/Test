@@ -246,6 +246,11 @@ export default {
                 })
                 if (response.data.success) {
                     this.result = response.data.exists
+                    Cookies.set('uid', this.$store.state.userInfo.user.uid, {
+                        expires: 7,
+                        secure: false,
+                        sameSite: 'Strict',
+                    })
                     Cookies.set(
                         'accountPermission',
                         JSON.stringify(this.result),

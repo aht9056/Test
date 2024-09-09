@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import {
     Button,
+    Badge,
     Checkbox,
     CheckboxGroup,
     Dialog,
@@ -19,6 +20,7 @@ import {
 } from 'element-ui'
 import '../scss/element-variables.scss'
 Vue.use(Button),
+    Vue.use(Badge),
     Vue.use(Checkbox),
     Vue.use(CheckboxGroup),
     Vue.use(Dialog),
