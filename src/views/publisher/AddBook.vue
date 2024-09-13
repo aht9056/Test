@@ -26,7 +26,7 @@
                                     name="languageRadio"
                                     id="isForiegnRadio_false"
                                     value="false"
-                                    v-model="bookData.isForiegn"
+                                    v-model="bookMessage.isForiegn"
                                 />
                                 <label
                                     class="form-check-label"
@@ -42,7 +42,7 @@
                                     name="languageRadio"
                                     id="isForiegnRadio_true"
                                     value="true"
-                                    v-model="bookData.isForiegn"
+                                    v-model="bookMessage.isForiegn"
                                 />
                                 <label
                                     class="form-check-label"
@@ -66,7 +66,7 @@
                                     type="radio"
                                     name="typeRadio"
                                     :id="'typeRadio_' + index"
-                                    v-model="bookData.type"
+                                    v-model="bookMessage.type"
                                     @change="changeTypeRadio(key)"
                                     :value="key"
                                 />
@@ -157,7 +157,7 @@
                             class="input__field"
                             type="text"
                             placeholder=""
-                            v-model="bookData.publisher"
+                            v-model="bookMessage.code"
                             readonly
                         />
                         <span class="input__label">出版社代號</span>
@@ -332,7 +332,7 @@
     </div>
 </template>
 <script>
-import api from '@/axios/axios.ts'
+import api from '@/axios/axios'
 import TagInput from '../../components/inputType/TagInput.vue'
 import SelectInput from '../../components/inputType/SelectInput.vue'
 import PickDate from '../../components/inputType/PickDate.vue'
@@ -350,13 +350,9 @@ export default {
         return {
             bookData: {
                 serialNumber: '',
-                status: '審核中',
                 name: '',
-                isForiegn: false,
-                type: 'T001',
                 subTypes: [],
                 author: [],
-                publisher: '',
                 publicationDate: '',
                 description: '',
                 bookTag: [],
@@ -374,19 +370,21 @@ export default {
                 saleTag: [],
             },
             bookMessage: {
+                code: '',
                 name: '',
+                type: 'T001',
+                publisherName: '',
+                isForiegn: false,
                 serialNumber: '',
                 fixMessage: '',
                 read: false,
+                forSale: false,
                 lastUpdateTime: '',
                 createTime: '',
                 option: 'addBook',
-                status: '',
+                status: '審核中',
             },
-            nowPublisher: {
-                name: '超級出版社',
-                code: '0001',
-            },
+            nowPublisher: {},
             images: [],
             typeList: {},
             nowSubTypesInfo: [],
@@ -395,7 +393,7 @@ export default {
                 type: '',
                 subTypes: '',
                 author: '',
-                publisher: '',
+                code: '',
                 photo: '',
                 publicationDate: '',
                 description: '',
@@ -413,7 +411,7 @@ export default {
     methods: {
         getTypeList() {
             this.typeList = this.$store.state.generalInfo.typeList
-            this.changeTypeRadio(this.bookData.type)
+            this.changeTypeRadio(this.bookMessage.type)
         },
         changeTypeRadio(key) {
             this.bookData.subTypes = []
@@ -434,11 +432,9 @@ export default {
         },
         handleImages(files) {
             this.images = files
-            console.log('Files in parent component:', this.images)
         },
         handlePdf(file) {
             this.pdfFile = file
-            console.log('已选择文件:', file.name)
         },
         getDescription(choice) {
             this.$swal
@@ -483,7 +479,7 @@ export default {
             } else {
                 this.errorHint.name = ''
             }
-            if (this.bookData.type === '') {
+            if (this.bookMessage.type === '') {
                 this.errorHint.type = '請選擇主類型'
                 flag = false
             } else {
@@ -562,7 +558,7 @@ export default {
                     icon: 'info',
                     allowOutsideClick: false,
                     showConfirmButton: false,
-                    cancelButtonText: '取消',
+                    showCancelButton: false,
                     didOpen: () => {
                         this.$swal.showLoading()
                         this.addToFirebase()
@@ -603,9 +599,9 @@ export default {
             })
 
             this.bookData.serialNumber =
-                this.bookData.publisher +
+                this.bookMessage.code +
                 '_' +
-                this.bookData.type +
+                this.bookMessage.type +
                 '_' +
                 taiwanTime.replace(/\D/g, '').slice(0, 14)
             this.bookMessage.serialNumber = this.bookData.serialNumber
@@ -620,7 +616,7 @@ export default {
 
                 const pdfBase64 = await this.convertFileToBase64(this.pdfFile)
 
-                const response = await api.post('/api/uploadAddBookRequest', {
+                const response = await api.post('/api/uploadBookRequest', {
                     images: imagesBase64,
                     pdf: pdfBase64,
                     serialNumber: this.bookData.serialNumber,
@@ -653,7 +649,9 @@ export default {
         },
     },
     beforeMount() {
-        this.bookData.publisher = this.nowPublisher.code
+        this.nowPublisher = this.$store.state.userInfo.userInfoData
+        this.bookMessage.code = this.nowPublisher.code
+        this.bookMessage.publisherName = this.nowPublisher.name
         this.getTypeList()
     },
 }

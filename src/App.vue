@@ -3,12 +3,32 @@
 </template>
 
 <script>
+import { getAuth } from 'firebase/auth'
 import api from '@/axios/axios.ts'
 export default {
     components: {},
     computed: {},
     methods: {},
-    created() {},
+    created() {
+        const auth = getAuth()
+        auth.onAuthStateChanged(user => {
+            if (user) {
+                // 获取用户的 authToken
+                user.getIdToken(true)
+                    .then(idToken => {
+                        // 处理 token
+                        console.log('Auth Token:', idToken)
+                        this.$store.state.idToken = idToken
+                    })
+                    .catch(error => {
+                        console.error('Error getting token:', error)
+                    })
+            } else {
+                // User is signed out
+                console.log('not login')
+            }
+        })
+    },
     beforeMount() {},
 }
 </script>

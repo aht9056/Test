@@ -1,7 +1,7 @@
 <template>
     <div class="w-100 position-relative d-flex flex-column">
         <div class="row gx-0">
-            <h1>出版商管理系統</h1>
+            <h1>管理員系統</h1>
         </div>
         <div v-if="dataLoaded" class="row gx-0 flex-grow-1">
             <div class="col-lg-2 col-md-12 col-sm-12 col-12 options">
@@ -14,9 +14,9 @@
                                 : 'notselected'
                         "
                         @click="goToPage('addBook')"
-                        title="新增書籍資料"
+                        title="看板"
                     >
-                        新增書籍資料
+                        看板
                     </div>
                     <div
                         class="text-decoration-none p-1 m-1 text-center text-truncate overflow-hidden text-nowrap bordergradient custom_button"
@@ -26,9 +26,9 @@
                                 : 'notselected'
                         "
                         @click="goToPage('requestList')"
-                        title="新增書籍請求狀態"
+                        title="審核請求"
                     >
-                        新增書籍請求狀態
+                        審核請求
                     </div>
                 </div>
             </div>
@@ -60,7 +60,7 @@ export default {
         goToPage(target) {
             if (target != this.nowPage) {
                 this.nowPage = target
-                this.$router.push(`/publisher/${target}`)
+                this.$router.push(`/admin/${target}`)
             }
         },
         async getInitData() {
@@ -72,7 +72,7 @@ export default {
 
                 if (uidResult) {
                     this.dataLoaded = true
-                    this.goToPage('addBook')
+                    this.goToPage('requestList')
                 }
 
                 if (typeListResponse && typeListResponse.data.success) {
@@ -89,7 +89,7 @@ export default {
             try {
                 const response = await api.post('/api/checkPermission', { uid })
                 if (response.data.success) {
-                    if (response.data.exists == 'publisher') {
+                    if (response.data.exists == 'admin') {
                         this.$store.state.userInfo.userInfoData =
                             response.data.infoData
                         return true

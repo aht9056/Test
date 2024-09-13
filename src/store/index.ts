@@ -15,7 +15,7 @@ const moduleGeneralInfo = {
 }
 
 export default new Vuex.Store({
-    state: { isLogin: false },
+    state: { isLogin: false, idToken: null },
     actions: {},
     mutations: {
         SET_IS_LOGIN(state, value) {

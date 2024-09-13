@@ -73,7 +73,10 @@
                 :data="showData"
                 style="width: 100%; background-color: transparent"
             >
-                <template slot="empty">暫無數據</template>
+                <template v-if="!dataOutlineLoaded" slot="empty"
+                    >資料載入中...</template
+                >
+                <template v-else slot="empty">暫無數據</template>
                 <el-table-column
                     prop="createTime"
                     label="建單時間"
@@ -111,7 +114,7 @@
                                         data-bs-toggle="modal"
                                         data-bs-target="#detailDataModal"
                                         @click="
-                                            showAddBookDetail(
+                                            showBookDetail(
                                                 scope.$index,
                                                 scope.row,
                                             )
@@ -127,10 +130,7 @@
                                     data-bs-toggle="modal"
                                     data-bs-target="#detailDataModal"
                                     @click="
-                                        showAddBookDetail(
-                                            scope.$index,
-                                            scope.row,
-                                        )
+                                        showBookDetail(scope.$index, scope.row)
                                     "
                                 >
                                     查看內容
@@ -226,7 +226,9 @@
                                     <th>語言分類</th>
                                     <td>
                                         <template
-                                            v-if="bookDataDetail.isForiegn"
+                                            v-if="
+                                                selectedBookDataOutline.isForiegn
+                                            "
                                             >中文</template
                                         >
                                         <template v-else>外文</template>
@@ -235,7 +237,11 @@
                                 <tr>
                                     <th>主類型</th>
                                     <td>
-                                        {{ typeList[bookDataDetail.type].name }}
+                                        {{
+                                            typeList[
+                                                selectedBookDataOutline.type
+                                            ].name
+                                        }}
                                     </td>
                                 </tr>
                                 <tr>
@@ -243,7 +249,7 @@
                                     <td>
                                         <template
                                             v-for="(subType, index) in typeList[
-                                                bookDataDetail.type
+                                                selectedBookDataOutline.type
                                             ].subTypes"
                                         >
                                             {{ subType }}
@@ -251,7 +257,8 @@
                                                 v-if="
                                                     index !=
                                                     typeList[
-                                                        bookDataDetail.type
+                                                        selectedBookDataOutline
+                                                            .type
                                                     ].subTypes.length -
                                                         1
                                                 "
@@ -354,13 +361,7 @@
                                 <tr>
                                     <th>出版社代號</th>
                                     <td colspan="5">
-                                        {{ bookDataDetail.publisher }}
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <th>出版社名稱</th>
-                                    <td colspan="5">
-                                        {{ bookDataDetail.publisher }}
+                                        {{ selectedBookDataOutline.code }}
                                     </td>
                                 </tr>
                                 <tr>
@@ -451,7 +452,7 @@
     </div>
 </template>
 <script>
-import api from '@/axios/axios.ts'
+import api from '@/axios/axios'
 export default {
     data() {
         return {
@@ -461,6 +462,8 @@ export default {
             requestListData: [],
             typeList: {},
             bookDataDetail: {},
+            selectedBookDataOutline: {},
+            dataOutlineLoaded: false,
             dataDetailLoaded: false,
             showDetailType: '書籍',
         }
@@ -517,6 +520,7 @@ export default {
                 })
                 if (response.data.success) {
                     this.requestListData = response.data.data
+                    this.dataOutlineLoaded = true
                 } else {
                     console.error(
                         'Failed to getDataList:',
@@ -531,18 +535,18 @@ export default {
             this.nowPage = page
             this.getShowData()
         },
-        async showAddBookDetail(index, row) {
+        async showBookDetail(index, row) {
             try {
                 const response = await api.post(
-                    '/api/getAddBookRequestListDetail',
+                    '/api/getRequestListDataDetailPublisher',
                     {
                         serialNumber: row.serialNumber,
                         readStatus: true,
-                        code: this.$store.state.userInfo.userInfoData.code,
                     },
                 )
                 if (response.data.success) {
                     this.bookDataDetail = response.data.data
+                    this.selectedBookDataOutline = row
                     this.dataDetailLoaded = true
                     const item = this.requestListData.find(
                         item => item.serialNumber === row.serialNumber,
@@ -579,13 +583,10 @@ export default {
                             icon: 'info',
                             allowOutsideClick: false,
                             showConfirmButton: false,
-                            cancelButtonText: '取消',
+                            showCancelButton: false,
                             didOpen: () => {
                                 this.$swal.showLoading()
-                                this.deleteToFirebase(
-                                    row.serialNumber,
-                                    row.option,
-                                )
+                                this.deleteToFirebase(row.serialNumber)
                                     .then(() => {
                                         this.$swal.close()
                                         this.$swal
@@ -633,12 +634,10 @@ export default {
                     }
                 })
         },
-        async deleteToFirebase(serialNumber, option) {
+        async deleteToFirebase(serialNumber) {
             try {
                 const response = await api.post('/api/deleteRequest', {
                     serialNumber: serialNumber,
-                    option: option,
-                    code: this.$store.state.userInfo.userInfoData.code,
                 })
 
                 if (response.data.success) {

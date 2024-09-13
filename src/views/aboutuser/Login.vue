@@ -94,7 +94,7 @@
 </template>
 
 <script>
-import api from '@/axios/axios.ts'
+import api from '@/axios/axios'
 import Cookies from 'js-cookie'
 import {
     signInWithGoogle,
@@ -150,6 +150,7 @@ export default {
                         secure: false,
                         sameSite: 'Strict',
                     })
+                    this.$store.state.userInfo = this.result
                     Cookies.set(
                         'accountPermission',
                         JSON.stringify(this.result),
@@ -159,7 +160,6 @@ export default {
                             sameSite: 'Strict',
                         },
                     )
-                    console.log(Cookies.get('accountPermission'))
                 } else {
                     console.error('Failed to check UID:', response.data.message)
                 }

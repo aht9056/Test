@@ -158,7 +158,11 @@ button {
     border-bottom-right-radius: var(--bs-modal-inner-border-radius);
     background-color: var(--color-content-background);
 }
-
+.modal-footer {
+    border-bottom-left-radius: var(--bs-modal-inner-border-radius);
+    border-bottom-right-radius: var(--bs-modal-inner-border-radius);
+    background-color: var(--color-content-background);
+}
 //載入中css
 .loading-overlay {
     display: flex;

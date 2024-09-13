@@ -72,6 +72,18 @@ const routes: Array<RouteConfig> = [
             },
         ],
     },
+    {
+        path: '/admin',
+        name: 'admin',
+        component: () => import('../views/Admin.vue'),
+        children: [
+            {
+                path: 'requestList',
+                name: 'requestList',
+                component: () => import('../views/admin/RequestList.vue'),
+            },
+        ],
+    },
 ]
 
 const router = new VueRouter({

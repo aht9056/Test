@@ -2,6 +2,9 @@
 import { initializeApp } from 'firebase/app'
 import { getAnalytics } from 'firebase/analytics'
 import {
+    setPersistence,
+    browserLocalPersistence,
+    onAuthStateChanged,
     getAuth,
     GoogleAuthProvider,
     signInWithPopup,
@@ -32,7 +35,6 @@ const firebaseConfig = {
     appId: '1:648871360118:web:d68bf3ba203a751b3d1157',
     measurementId: 'G-WBZJN6Z0V5',
 }
-
 // Initialize Firebase
 const firebaseApp = initializeApp(firebaseConfig)
 const analytics = getAnalytics(firebaseApp)
@@ -43,7 +45,13 @@ const provider = new GoogleAuthProvider()
 provider.setCustomParameters({
     prompt: 'select_account',
 })
-
+setPersistence(auth, browserLocalPersistence)
+    .then(() => {
+        console.log('Persistence set to local storage.')
+    })
+    .catch(error => {
+        console.error('Error setting persistence:', error)
+    })
 const signInWithGoogle = () => {
     return signInWithPopup(auth, provider)
 }
@@ -51,7 +59,6 @@ const signInWithGoogle = () => {
 const signOut = async () => {
     await firebaseSignOut(auth)
 }
-
 const signUpWithEmail = async (email, password, displayName) => {
     try {
         const result = await createUserWithEmailAndPassword(
