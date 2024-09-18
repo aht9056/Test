@@ -218,18 +218,14 @@
                                             <template
                                                 v-for="(
                                                     subType, index
-                                                ) in typeList[
-                                                    selectedBookDataOutline.type
-                                                ].subTypes"
+                                                ) in bookDataDetail.subTypes"
                                             >
                                                 {{ subType }}
                                                 <template
                                                     v-if="
                                                         index !=
-                                                        typeList[
-                                                            selectedBookDataOutline
-                                                                .type
-                                                        ].subTypes.length -
+                                                        bookDataDetail.subTypes
+                                                            .length -
                                                             1
                                                     "
                                                 >
@@ -498,6 +494,7 @@
 <script>
 import api from '@/axios/axios.ts'
 import Cookies from 'js-cookie'
+import { Modal } from 'bootstrap'
 export default {
     data() {
         return {
@@ -592,24 +589,9 @@ export default {
             this.dataDetailLoaded = false
             this.bookDataDetail = {}
             this.selectedBookDataOutline = {}
-            const modalElement = document.getElementById('detailDataModal') // 獲取模態框元素
-            if (modalElement) {
-                const modalInstance =
-                    window.bootstrap.Modal.getInstance(modalElement) // 獲取模態框的實例
-                if (modalInstance) {
-                    modalInstance.hide() // 關閉模態框
-                } else {
-                    // 如果實例尚不存在，則手動創建並隱藏
-                    const newModalInstance = new window.bootstrap.Modal(
-                        modalElement,
-                    )
-                    newModalInstance.hide()
-                }
-            }
-            const backdrop = document.querySelector('.modal-backdrop')
-            if (backdrop) {
-                backdrop.parentNode.removeChild(backdrop)
-            }
+            var myModalEl = document.getElementById('detailDataModal')
+            var modal = Modal.getInstance(myModalEl)
+            modal.hide()
         },
         async getInit() {
             await this.getRequestListData()

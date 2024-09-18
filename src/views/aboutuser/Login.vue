@@ -150,7 +150,7 @@ export default {
                         secure: false,
                         sameSite: 'Strict',
                     })
-                    this.$store.state.userInfo = this.result
+                    // this.$store.state.userInfo = this.result
                     Cookies.set(
                         'accountPermission',
                         JSON.stringify(this.result),

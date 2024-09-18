@@ -30,8 +30,7 @@ onAuthStateChanged(auth, user => {
 // 使用 BootstrapVue
 Vue.use(BootstrapVue)
 Vue.use(IconsPlugin)
-window.bootstrap = require('bootstrap/dist/js/bootstrap.bundle.js')
-
+// window.bootstrap = require('bootstrap/dist/js/bootstrap.bundle.js')
 Vue.prototype.$swal = customSwal
 
 Vue.config.productionTip = false

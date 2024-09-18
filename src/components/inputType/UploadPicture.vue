@@ -10,10 +10,12 @@
                 @change="handleFolderSelect"
                 style="display: none"
             />
-            <span v-if="hasImages"> 選擇的圖檔: </span>
+            <span v-if="hasImages || originContentImages.length != 0">
+                選擇的圖檔:
+            </span>
             <span v-else> 未選擇任何圖檔 </span>
             <a
-                v-if="hasImages"
+                v-if="hasImages || originContentImages.length != 0"
                 class=""
                 data-bs-toggle="collapse"
                 href="#imageCollapse"
@@ -24,7 +26,20 @@
             >
         </div>
         <div class="collapse multi-collapse" id="imageCollapse">
-            <div v-if="images.length">
+            <div v-if="originContentImages.length != 0 && !hasImages">
+                <div class="image-container">
+                    <div
+                        v-for="(image, index) in originContentImages"
+                        :key="index"
+                        class="image-wrapper"
+                    >
+                        <img :src="image" />
+                        <p v-if="index == 0">封面</p>
+                        <p v-else>圖片{{ index }}</p>
+                    </div>
+                </div>
+            </div>
+            <div v-else-if="images.length">
                 <div class="image-container">
                     <div
                         v-for="(image, index) in images"
@@ -46,6 +61,11 @@ export default {
         images: {
             type: Array,
             default: () => [],
+        },
+        originContentImages: {
+            type: Array,
+            default: () => [],
+            required: false,
         },
     },
     data() {

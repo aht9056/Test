@@ -110,6 +110,7 @@
                             <div v-if="!scope.row.read" class="p-1">
                                 <el-badge is-dot class="item">
                                     <button
+                                        v-if="showStatus === '審核中'"
                                         class="button_design p-1"
                                         data-bs-toggle="modal"
                                         data-bs-target="#detailDataModal"
@@ -122,10 +123,25 @@
                                     >
                                         查看內容
                                     </button>
+                                    <button
+                                        v-else-if="showStatus === '待修改'"
+                                        class="button_design p-1"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#detailDataFixModal"
+                                        @click="
+                                            fixBookDetail(
+                                                scope.$index,
+                                                scope.row,
+                                            )
+                                        "
+                                    >
+                                        修改內容
+                                    </button>
                                 </el-badge>
                             </div>
                             <div v-else>
                                 <button
+                                    v-if="showStatus === '審核中'"
                                     class="button_design p-1"
                                     data-bs-toggle="modal"
                                     data-bs-target="#detailDataModal"
@@ -134,6 +150,17 @@
                                     "
                                 >
                                     查看內容
+                                </button>
+                                <button
+                                    v-else-if="showStatus === '待修改'"
+                                    class="button_design p-1"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#detailDataFixModal"
+                                    @click="
+                                        fixBookDetail(scope.$index, scope.row)
+                                    "
+                                >
+                                    修改內容
                                 </button>
                             </div>
                             <div class="p-1">
@@ -161,6 +188,7 @@
             ></el-pagination>
         </div>
         <div
+            v-if="showStatus == '審核中'"
             class="modal fade"
             id="detailDataModal"
             tabindex="-1"
@@ -205,8 +233,7 @@
                             <button
                                 type="button"
                                 class="close_btn"
-                                data-bs-dismiss="modal"
-                                @click="closeModal()"
+                                @click="closeModal('detailDataModal')"
                             >
                                 <i class="bi bi-plus-lg"></i>
                             </button>
@@ -248,18 +275,16 @@
                                     <th>子類型</th>
                                     <td>
                                         <template
-                                            v-for="(subType, index) in typeList[
-                                                selectedBookDataOutline.type
-                                            ].subTypes"
+                                            v-for="(
+                                                subType, index
+                                            ) in bookDataDetail.subTypes"
                                         >
                                             {{ subType }}
                                             <template
                                                 v-if="
                                                     index !=
-                                                    typeList[
-                                                        selectedBookDataOutline
-                                                            .type
-                                                    ].subTypes.length -
+                                                    bookDataDetail.subTypes
+                                                        .length -
                                                         1
                                                 "
                                             >
@@ -449,11 +474,66 @@
                 </div>
             </div>
         </div>
+        <div
+            v-if="showStatus == '待修改'"
+            class="modal fade"
+            id="detailDataFixModal"
+            tabindex="-1"
+            aria-labelledby="detailDataFixModalLabel"
+            aria-hidden="true"
+            data-bs-focus="false"
+            data-bs-backdrop="static"
+        >
+            <div class="modal-dialog modal-xl">
+                <div class="modal-content">
+                    <div class="modal-header justify-content-between">
+                        <div>
+                            <h2
+                                class="modal-title fs-6"
+                                id="detailDataFixModalLabel"
+                            >
+                                修改:{{ bookDataDetail.serialNumber }}
+                            </h2>
+                        </div>
+                        <div>
+                            <button
+                                type="button"
+                                class="close_btn"
+                                @click="closeModal('detailDataFixModal')"
+                            >
+                                <i class="bi bi-plus-lg"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div v-if="dataDetailLoaded" class="modal-body">
+                        <FixBook
+                            :bookDataFromView="bookDataDetail"
+                            :bookMessageFromView="selectedBookDataOutline"
+                            @closeModal="closeModal('detailDataFixModal')"
+                        />
+                    </div>
+                    <div v-else class="modal-body" style="height: auto">
+                        <div class="loading-overlay">
+                            <div class="loading-spinner-container">
+                                <div class="loading-spinner"></div>
+                            </div>
+                            <div class="loading-text">資料載入中...</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </template>
 <script>
 import api from '@/axios/axios'
+import { RouterView } from 'vue-router'
+import FixBook from '@/components/FixBook.vue'
+import { Modal } from 'bootstrap'
 export default {
+    components: {
+        FixBook,
+    },
     data() {
         return {
             showStatus: '審核中',
@@ -564,6 +644,36 @@ export default {
                 console.error('Error Data SerialNumber:', error)
             }
         },
+        async fixBookDetail(index, row) {
+            try {
+                const response = await api.post(
+                    '/api/getRequestListDataDetailPublisher',
+                    {
+                        serialNumber: row.serialNumber,
+                        readStatus: true,
+                    },
+                )
+                if (response.data.success) {
+                    this.bookDataDetail = response.data.data
+                    console.log(response.data.data)
+                    this.selectedBookDataOutline = row
+                    this.dataDetailLoaded = true
+                    const item = this.requestListData.find(
+                        item => item.serialNumber === row.serialNumber,
+                    )
+                    if (item) {
+                        item.read = true
+                    }
+                } else {
+                    console.error(
+                        'Failed to getDataDetail:',
+                        response.data.message,
+                    )
+                }
+            } catch (error) {
+                console.error('Error Data SerialNumber:', error)
+            }
+        },
         deleteAddBook(index, row) {
             this.$swal
                 .fire({
@@ -654,9 +764,12 @@ export default {
         getTypeList() {
             this.typeList = this.$store.state.generalInfo.typeList
         },
-        closeModal() {
+        closeModal(modalId) {
             this.dataDetailLoaded = false
             this.bookDataDetail = {}
+            var myModalEl = document.getElementById(modalId)
+            var modal = Modal.getInstance(myModalEl)
+            modal.hide()
         },
         async getInit() {
             await this.getRequestListData()

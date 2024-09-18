@@ -2,10 +2,27 @@
     <div class="container-fluid layout w-100">
         <article class="l-design-width">
             <div class="card row flex-row">
-                <div class="col-lg-6 col-12">
+                <div class="col-lg-12 col-12 p-1 d-flex flex-row-reverse">
+                    <div class="input w-100">
+                        <textarea
+                            class="input__field"
+                            style="color: red; height: 150px"
+                            v-model="bookMessage.fixMessage"
+                            placeholder=""
+                            readonly
+                        ></textarea>
+                        <span class="input__label">審核未通過原因</span>
+                    </div>
+                </div>
+                <div class="col-lg-6 col-12 p-2">
                     <div class="d-flex justify-content-between">
                         <h3>書籍資料</h3>
                         <button @click="checkBookData()">檢查</button>
+                    </div>
+                    <div class="d-flex justify-content-end">
+                        <small class="errorhint" style="color: green">{{
+                            qualified
+                        }}</small>
                     </div>
                     <div class="input">
                         <input
@@ -132,6 +149,7 @@
                         <div class="input__field d-flex flex-wrap flex-column">
                             <UploadPicture
                                 :images="images"
+                                :originContentImages="bookData.contentPagePhoto"
                                 @files-selected="handleImages"
                             />
                         </div>
@@ -142,13 +160,15 @@
                         <div class="input__field d-flex flex-wrap flex-column">
                             <UploadPdf
                                 :nowfile="pdfFile"
+                                :originPdf="true"
+                                :serialNumber="bookData.serialNumber"
                                 @file-selected="handlePdf"
                             />
                         </div>
                         <span class="input__label">書籍pdf檔</span>
                     </div>
                 </div>
-                <div class="col-lg-6 col-12">
+                <div class="col-lg-6 col-12 p-2">
                     <h2>出版資料</h2>
                     <div class="input">
                         <input
@@ -205,8 +225,8 @@
                     </div>
                     <h2>販售資料</h2>
                     <small class="errorhint">{{ errorHint.saleType }}</small>
-                    <div class="input d-flex justify-content-between">
-                        <div class="mt-1 input flex-grow-1">
+                    <div class="input d-flex">
+                        <div class="mt-1 input w-100">
                             <div class="input__field h-100 d-flex flex-wrap">
                                 <div class="form-check col-6">
                                     <input
@@ -236,6 +256,7 @@
                                     <label
                                         class="form-check-label"
                                         for="entityRadio_false"
+                                        style="white-space: nowrap"
                                     >
                                         無販售
                                     </label>
@@ -243,10 +264,7 @@
                             </div>
                             <span class="input__label">實體書</span>
                         </div>
-                        <div
-                            v-if="bookData.entity"
-                            class="mt-1 ms-1 input flex-grow-1"
-                        >
+                        <div v-if="bookData.entity" class="mt-1 ms-1 input">
                             <input
                                 class="input__field h-100"
                                 type="number"
@@ -255,10 +273,7 @@
                             />
                             <span class="input__label">定價</span>
                         </div>
-                        <div
-                            v-if="bookData.entity"
-                            class="mt-1 ms-1 input flex-grow-1"
-                        >
+                        <div v-if="bookData.entity" class="mt-1 ms-1 input">
                             <input
                                 class="input__field h-100"
                                 type="number"
@@ -322,8 +337,8 @@
                     </div>
                     <small class="errorhint">{{ errorHint.ebookPrice }}</small>
                 </div>
-                <div class="col-lg-12 col-12 d-flex flex-row-reverse">
-                    <button @click="addBook()">送出</button>
+                <div class="col-lg-12 col-12 p-1 d-flex flex-row-reverse">
+                    <button @click="fixBook()">送出</button>
                 </div>
             </div>
         </article>
@@ -331,13 +346,24 @@
 </template>
 <script>
 import api from '@/axios/axios'
-import TagInput from '../../components/inputType/TagInput.vue'
-import SelectInput from '../../components/inputType/SelectInput.vue'
-import PickDate from '../../components/inputType/PickDate.vue'
-import UploadPicture from '../../components/inputType/UploadPicture.vue'
-import UploadPdf from '../../components/inputType/UploadPdf.vue'
+import TagInput from './inputType/TagInput.vue'
+import SelectInput from './inputType/SelectInput.vue'
+import PickDate from './inputType/PickDate.vue'
+import UploadPicture from './inputType/UploadPicture.vue'
+import UploadPdf from './inputType/UploadPdf.vue'
 import Cookies from 'js-cookie'
 export default {
+    name: 'FixBook',
+    props: {
+        bookDataFromView: {
+            type: Object,
+            required: true,
+        },
+        bookMessageFromView: {
+            type: Object,
+            required: true,
+        },
+    },
     components: {
         TagInput,
         SelectInput,
@@ -347,41 +373,8 @@ export default {
     },
     data() {
         return {
-            bookData: {
-                serialNumber: '',
-                name: '',
-                subTypes: [],
-                author: [],
-                publicationDate: '',
-                description: '',
-                bookTag: [],
-                contentPagePhoto: [],
-                pdf: '',
-                ebook: false,
-                entity: true,
-                entityPrice: 0,
-                ebookPrice: 0,
-                sold: 0,
-                authorIntro: '',
-                stock: 0,
-                discount: 80,
-                saleTag: [],
-            },
-            bookMessage: {
-                code: '',
-                name: '',
-                type: 'T001',
-                publisherName: '',
-                isForiegn: false,
-                serialNumber: '',
-                fixMessage: '',
-                read: false,
-                forSale: false,
-                lastUpdateTime: '',
-                createTime: '',
-                option: 'addBook',
-                status: '審核中',
-            },
+            bookData: this.bookDataFromView,
+            bookMessage: this.bookMessageFromView,
             nowPublisher: {},
             images: [],
             typeList: {},
@@ -402,6 +395,7 @@ export default {
                 ebookPrice: '',
                 saleType: '',
             },
+            qualified: '',
             pdfFile: null,
         }
     },
@@ -409,22 +403,12 @@ export default {
     methods: {
         getTypeList() {
             this.typeList = this.$store.state.generalInfo.typeList
-            this.changeTypeRadio(this.bookMessage.type)
+            this.nowSubTypesInfo = this.typeList[this.bookMessage.type].subTypes
         },
         changeTypeRadio(key) {
             this.bookData.subTypes = []
             this.nowSubTypesInfo = this.typeList[key].subTypes
         },
-        // changeSubType(event, subType, subTypeIndex) {
-        //     if (event.target.checked) {
-        //         this.bookData.subTypes.push(subTypeIndex)
-        //     } else {
-        //         const index = this.bookData.subTypes.indexOf(subType)
-        //         if (index > -1) {
-        //             this.bookData.subTypes.splice(index, 1)
-        //         }
-        //     }
-        // },
         handleDatePick(date) {
             this.bookData.publicationDate = date
         },
@@ -443,6 +427,17 @@ export default {
                     showCancelButton: true,
                     confirmButtonText: '確定',
                     cancelButtonText: '取消',
+                    didOpen: () => {
+                        // 當彈窗打開後，給 textarea 預設值
+                        const textarea = this.$swal
+                            .getPopup()
+                            .querySelector('#swal-textarea')
+                        if (choice == 'book') {
+                            textarea.value = this.bookData.description
+                        } else {
+                            textarea.value = this.bookData.authorIntro
+                        }
+                    },
                     preConfirm: () => {
                         const textareaValue = this.$swal
                             .getPopup()
@@ -501,7 +496,10 @@ export default {
             } else {
                 this.errorHint.description = ''
             }
-            if (this.images.length === 0) {
+            if (
+                this.images.length === 0 &&
+                this.bookData.contentPagePhoto.length === 0
+            ) {
                 this.errorHint.photo = '請至少放上一張圖片'
                 flag = false
             } else {
@@ -543,12 +541,18 @@ export default {
             } else {
                 this.errorHint.ebookPrice = ''
             }
+            if (flag == false) {
+                this.qualified = ''
+            } else {
+                this.qualified = '資料格式合格'
+            }
             return flag
         },
-        addBook() {
+        fixBook() {
             if (this.checkBookData()) {
-                this.updateSerialNumber()
+                this.updateLastUpdateTime()
                 this.bookMessage.status = '審核中'
+                this.bookMessage.read = false
                 this.bookMessage.name = this.bookData.name
                 this.$swal.fire({
                     title: '處理中...',
@@ -559,7 +563,7 @@ export default {
                     showCancelButton: false,
                     didOpen: () => {
                         this.$swal.showLoading()
-                        this.addToFirebase()
+                        this.fixToFirebase()
                             .then(() => {
                                 this.$swal.close()
                                 this.$swal.fire({
@@ -570,6 +574,9 @@ export default {
                                     showCancelButton: false,
                                 })
                             })
+                            .then(result => {
+                                this.$emit('closeModal')
+                            })
                             .catch(error => {
                                 this.$swal.close()
                                 this.$swal.fire({
@@ -578,13 +585,13 @@ export default {
                                     icon: 'error',
                                     confirmButtonText: '確定',
                                 })
-                                console.error('Error in addBook method:', error)
+                                console.error('Error in fixBook method:', error)
                             })
                     },
                 })
             }
         },
-        updateSerialNumber() {
+        updateLastUpdateTime() {
             const taiwanTime = new Date().toLocaleString('zh-TW', {
                 timeZone: 'Asia/Taipei',
                 year: 'numeric',
@@ -595,26 +602,23 @@ export default {
                 second: '2-digit',
                 hour12: false,
             })
-
-            this.bookData.serialNumber =
-                this.bookMessage.code +
-                '_' +
-                this.bookMessage.type +
-                '_' +
-                taiwanTime.replace(/\D/g, '').slice(0, 14)
-            this.bookMessage.serialNumber = this.bookData.serialNumber
-            this.bookMessage.createTime = taiwanTime
             this.bookMessage.lastUpdateTime = taiwanTime
         },
-        async addToFirebase() {
+        async fixToFirebase() {
             try {
-                const imagesBase64 = await Promise.all(
-                    this.images.map(image => this.convertFileToBase64(image)),
-                )
-
-                const pdfBase64 = await this.convertFileToBase64(this.pdfFile)
-
-                const response = await api.post('/api/addBookRequest', {
+                let imagesBase64 = 'empty'
+                if (this.images.length != 0) {
+                    imagesBase64 = await Promise.all(
+                        this.images.map(image =>
+                            this.convertFileToBase64(image),
+                        ),
+                    )
+                }
+                let pdfBase64 = 'empty'
+                if (this.pdfFile != null) {
+                    pdfBase64 = await this.convertFileToBase64(this.pdfFile)
+                }
+                const response = await api.post('/api/uploadBookRequest', {
                     images: imagesBase64,
                     pdf: pdfBase64,
                     serialNumber: this.bookData.serialNumber,
@@ -634,7 +638,7 @@ export default {
                     return Promise.reject(response.data.message)
                 }
             } catch (error) {
-                console.error('Error in addBook method:', error)
+                console.error('Error in fixBook method:', error)
                 return Promise.reject(error)
             }
         },
@@ -649,14 +653,12 @@ export default {
     },
     beforeMount() {
         this.nowPublisher = this.$store.state.userInfo.userInfoData
-        this.bookMessage.code = this.nowPublisher.code
-        this.bookMessage.publisherName = this.nowPublisher.name
         this.getTypeList()
     },
 }
 </script>
 <style lang="scss" scoped>
-@import '../../scss/aboutuser/styles.scss';
+@import '../scss/aboutuser/styles.scss';
 .form-check-input:checked {
     background-color: var(--color-primary);
     border-color: var(--color-primary);
