@@ -671,9 +671,6 @@ export default {
             try {
                 const response = await api.post('/api/dataCertified', {
                     serialNumber: this.bookDataDetail.serialNumber,
-                    option: this.selectedBookDataOutline.option,
-                    code: this.bookDataDetail.publisher,
-                    type: this.bookDataDetail.type,
                 })
                 if (response.data.success) {
                     const index = this.requestListData.findIndex(

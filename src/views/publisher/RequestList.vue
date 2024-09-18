@@ -110,7 +110,10 @@
                             <div v-if="!scope.row.read" class="p-1">
                                 <el-badge is-dot class="item">
                                     <button
-                                        v-if="showStatus === '審核中'"
+                                        v-if="
+                                            showStatus === '審核中' ||
+                                            showStatus === '已完成'
+                                        "
                                         class="button_design p-1"
                                         data-bs-toggle="modal"
                                         data-bs-target="#detailDataModal"
@@ -163,7 +166,7 @@
                                     修改內容
                                 </button>
                             </div>
-                            <div class="p-1">
+                            <div class="p-1" v-if="showStatus != '已完成'">
                                 <button
                                     class="button_design p-1"
                                     @click="
