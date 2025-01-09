@@ -11,6 +11,7 @@ const moduleUserInfo = {
 const moduleGeneralInfo = {
     state: {
         typeList: {},
+        publisherList: {},
     },
 }
 

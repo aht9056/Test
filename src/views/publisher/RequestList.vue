@@ -144,7 +144,10 @@
                             </div>
                             <div v-else>
                                 <button
-                                    v-if="showStatus === '審核中'"
+                                    v-if="
+                                        showStatus === '審核中' ||
+                                        showStatus === '已完成'
+                                    "
                                     class="button_design p-1"
                                     data-bs-toggle="modal"
                                     data-bs-target="#detailDataModal"
@@ -191,7 +194,7 @@
             ></el-pagination>
         </div>
         <div
-            v-if="showStatus == '審核中'"
+            v-if="showStatus == '審核中' || showStatus == '已完成'"
             class="modal fade"
             id="detailDataModal"
             tabindex="-1"
@@ -257,7 +260,7 @@
                                     <td>
                                         <template
                                             v-if="
-                                                selectedBookDataOutline.isForiegn
+                                                selectedBookDataOutline.isForeign
                                             "
                                             >中文</template
                                         >

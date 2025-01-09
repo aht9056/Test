@@ -82,6 +82,11 @@ const routes: Array<RouteConfig> = [
                 name: 'requestList',
                 component: () => import('../views/admin/RequestList.vue'),
             },
+            {
+                path: 'bookMangement',
+                name: 'bookMangement',
+                component: () => import('../views/admin/BookMangement.vue'),
+            },
         ],
     },
 ]

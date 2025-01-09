@@ -30,6 +30,18 @@
                     >
                         審核請求
                     </div>
+                    <div
+                        class="text-decoration-none p-1 m-1 text-center text-truncate overflow-hidden text-nowrap bordergradient custom_button"
+                        :class="
+                            this.nowPage === 'bookMangement'
+                                ? 'selected'
+                                : 'notselected'
+                        "
+                        @click="goToPage('bookMangement')"
+                        title="書籍上架管理"
+                    >
+                        書籍上架管理
+                    </div>
                 </div>
             </div>
             <div class="col-lg-10 col-md-12 col-sm-12 col-12 content">
@@ -65,10 +77,12 @@ export default {
         },
         async getInitData() {
             try {
-                const [uidResult, typeListResponse] = await Promise.all([
-                    this.checkUid(),
-                    this.getTypeList(),
-                ])
+                const [uidResult, typeListResponse, publisherListResponse] =
+                    await Promise.all([
+                        this.checkUid(),
+                        this.getTypeList(),
+                        this.getPublisherList(),
+                    ])
 
                 if (uidResult) {
                     this.dataLoaded = true
@@ -79,6 +93,13 @@ export default {
                     this.result = typeListResponse.data.typeList
                     this.$store.state.generalInfo.typeList =
                         typeListResponse.data.typeList
+                }
+                if (
+                    publisherListResponse &&
+                    publisherListResponse.data.success
+                ) {
+                    this.$store.state.generalInfo.publisherList =
+                        publisherListResponse.data.publisherList
                 }
             } catch (error) {
                 console.error('Error during initialization:', error)
@@ -109,6 +130,15 @@ export default {
                 return response
             } catch (error) {
                 console.error('Error fetching type list:', error)
+                return null
+            }
+        },
+        async getPublisherList() {
+            try {
+                const response = await api.get('/api/getPublisherList')
+                return response
+            } catch (error) {
+                console.error('Error fetching publisher list:', error)
                 return null
             }
         },

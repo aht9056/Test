@@ -3,3 +3,37 @@ $--color-primary: #f99d09;
 // 引入 Element UI 的默认样式
 $--font-path: '~element-ui/lib/theme-chalk/fonts';
 @import '~element-ui/packages/theme-chalk/src/index';
+.orgstructure-cascader {
+    ::-webkit-scrollbar {
+        height: 0;
+        width: 0;
+        color: transparent;
+    }
+    .el-scrollbar__wrap {
+        color: black;
+        max-height: 150px;
+        height: auto !important;
+        width: auto !important;
+        overflow-x: hidden;
+        overflow-y: visible;
+        margin-bottom: 0px !important;
+        margin-right: 0px !important;
+    }
+}
+html body.swal2-height-auto {
+    height: 100% !important;
+}
+.popover-style {
+    background: var(--color-navbar-hover-background) !important;
+    color: var(--color-navbar-text) !important;
+    border: 0px !important;
+}
+.popover-style.el-popper .popper__arrow {
+    border-bottom-color: var(--color-navbar-hover-background) !important;
+}
+.popover-style.el-popper .popper__arrow::after {
+    border-bottom-color: var(--color-navbar-hover-background) !important;
+}
+#app {
+    background-color: var(--color-content-background);
+}

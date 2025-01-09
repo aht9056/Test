@@ -1,30 +1,161 @@
 <template>
-    <div class="container-fluid layout w-100 p-5">
-        <div class="d-flex">
-            <div class="ms-4">
-                <div>
-                    <button
-                        class="button_design"
-                        :class="{ selected: showStatus === '審核中' }"
-                        @click="showStatus = '審核中'"
-                    >
-                        審核中
-                    </button>
+    <div
+        class="container-fluid layout d-flex flex-column justify-content-center w-100"
+    >
+        <div
+            class="d-flex flex-column align-items-center align-content-stretch"
+        >
+            <div class="d-flex w-100 justify-content-center">
+                <div class="w-100 d-flex justify-content-evenly">
+                    <div class="me-2">
+                        <input
+                            class="form-check-input"
+                            type="radio"
+                            name="searchTypeRadio"
+                            id="searchTypeRadio_single"
+                            value="single"
+                            v-model="searchType"
+                            @change="
+                                (showTable = false), (searchErrorHint = '')
+                            "
+                        />
+                        <label
+                            class="form-check-label"
+                            for="searchTypeRadio_single"
+                        >
+                            序列號查詢
+                        </label>
+                    </div>
+                    <div>
+                        <input
+                            class="form-check-input"
+                            type="radio"
+                            name="searchTypeRadio"
+                            id="searchTypeRadio_muti"
+                            value="muti"
+                            v-model="searchType"
+                            @change="
+                                (showTable = false), (searchErrorHint = '')
+                            "
+                        />
+                        <label
+                            class="form-check-label"
+                            for="searchTypeRadio_muti"
+                        >
+                            條件篩選查詢
+                        </label>
+                    </div>
                 </div>
             </div>
-            <div class="ms-4">
-                <div>
-                    <button
-                        class="button_design"
-                        :class="{ selected: showStatus === '待修改' }"
-                        @click="showStatus = '待修改'"
-                    >
-                        等待修改
-                    </button>
-                </div>
+            <div class="d-flex w-100 justify-content-center">
+                <article
+                    v-show="searchType === 'single'"
+                    class="l-design-width w-100"
+                >
+                    <div class="card row flex-row">
+                        <div class="col-2 p-0 d-flex">
+                            <el-input
+                                v-model="serialNumber_1"
+                                placeholder="出版社代號(必填)"
+                                clearable
+                            />
+                        </div>
+                        <div class="col-2 p-0 d-flex">
+                            <span class="ms-1 me-1">_</span>
+                            <el-input
+                                v-model="serialNumber_2"
+                                placeholder="類別代號(必填)"
+                                clearable
+                            />
+                        </div>
+                        <div class="col-7 p-0 d-flex">
+                            <span class="ms-1 me-1">_</span>
+                            <el-input
+                                v-model="serialNumber_3"
+                                type="number"
+                                placeholder="流水號(必填)"
+                                clearable
+                            />
+                        </div>
+                        <div class="col-1 p-0">
+                            <button
+                                class="search_btn"
+                                @click="checkSingleSerach"
+                            >
+                                搜尋
+                            </button>
+                        </div>
+                        <small class="errorhint">{{ searchErrorHint }}</small>
+                    </div>
+                </article>
+                <article
+                    v-show="searchType === 'muti'"
+                    class="l-design-width w-100"
+                >
+                    <div class="card row flex-row">
+                        <div class="col-2 p-0">
+                            <el-cascader
+                                :options="forSaleOption"
+                                :placeholder="'已/未上架(選填)'"
+                                popper-class="orgstructure-cascader"
+                                @change="handleForSaleChange"
+                                clearable
+                            >
+                            </el-cascader>
+                        </div>
+                        <div class="col-1 p-0">
+                            <el-cascader
+                                :options="languageOption"
+                                :placeholder="'語言(選填)'"
+                                popper-class="orgstructure-cascader"
+                                @change="handleForeignChange"
+                                clearable
+                            >
+                            </el-cascader>
+                        </div>
+                        <div class="col-3 p-0">
+                            <el-cascader
+                                v-model="filterWord.type.value"
+                                :options="typeOption"
+                                :props="props"
+                                :placeholder="'請選擇類型-最多十種(選填)'"
+                                popper-class="orgstructure-cascader"
+                                @change="handleTypeChange"
+                                clearable
+                            ></el-cascader>
+                        </div>
+                        <div class="col-2 p-0">
+                            <el-cascader
+                                :options="publisherOption"
+                                :placeholder="'請選擇出版社(選填)'"
+                                popper-class="orgstructure-cascader"
+                                @change="handlePublisherChange"
+                                clearable
+                            >
+                            </el-cascader>
+                        </div>
+                        <div class="col-3 p-0">
+                            <el-input
+                                v-model="filterWord.name"
+                                placeholder="輸入書名關鍵字(選填)"
+                                clearable
+                            />
+                        </div>
+                        <div class="col-1 p-0">
+                            <button class="search_btn" @click="checkFilterWord">
+                                搜尋
+                            </button>
+                        </div>
+                        <div>
+                            <small class="errorhint">{{
+                                searchErrorHint
+                            }}</small>
+                        </div>
+                    </div>
+                </article>
             </div>
         </div>
-        <div class="content">
+        <div class="content w-100" v-show="showTable">
             <el-table
                 :data="showData"
                 style="width: 100%; background-color: transparent"
@@ -35,7 +166,7 @@
                 <template v-else slot="empty">暫無數據</template>
                 <el-table-column
                     prop="createTime"
-                    label="建單時間"
+                    label="建單日期"
                     sortable
                     width="190"
                 >
@@ -44,26 +175,23 @@
                 </el-table-column>
                 <el-table-column prop="name" label="書籍名稱">
                 </el-table-column>
-                <el-table-column prop="option" label="最後更新時間" width="190">
+                <el-table-column prop="forSale" width="120" label="已/未上架">
                     <template slot-scope="scope">
-                        <span>{{ scope.row.lastUpdateTime }}</span>
+                        <span v-if="scope.row.forSale == true"
+                            ><i
+                                class="bi bi-check-circle-fill text-success"
+                            ></i>
+                            已上架</span
+                        >
+                        <span v-else
+                            ><i class="bi bi-x-circle-fill text-danger"></i>
+                            未上架</span
+                        >
                     </template>
                 </el-table-column>
-                <el-table-column prop="option" label="請求類別" width="100">
-                    <template slot-scope="scope">
-                        <span v-if="scope.row.option === 'addBook'"
-                            >新增商品</span
-                        >
-                        <span v-else-if="scope.row.option === 'editBook'"
-                            >修改商品資訊</span
-                        >
-                        <span v-else>未知類別</span>
-                    </template>
+                <el-table-column prop="type" width="60" label="類型">
                 </el-table-column>
-                <el-table-column width="180">
-                    <template slot="header" slot-scope="scope">
-                        <el-input size="mini" placeholder="輸入關鍵字搜尋" />
-                    </template>
+                <el-table-column width="230" label="操作">
                     <template slot-scope="scope"
                         ><div
                             class="d-flex justify-content-around align-items-center"
@@ -77,11 +205,40 @@
                                         showBookDetail(scope.$index, scope.row)
                                     "
                                 >
-                                    {{
-                                        showStatus !== '待修改'
-                                            ? '審核內容'
-                                            : '查看內容'
-                                    }}
+                                    {{ '檢視內容' }}
+                                </button>
+                            </div>
+                            <div>
+                                <button
+                                    v-if="scope.row.forSale == true"
+                                    class="button_design p-1"
+                                    @click="
+                                        confirmforSaleStatusUpdate(
+                                            scope.$index,
+                                            scope.row,
+                                            false,
+                                        )
+                                    "
+                                >
+                                    {{ '下架' }}
+                                </button>
+                                <button
+                                    v-else
+                                    class="button_design p-1"
+                                    @click="
+                                        confirmforSaleStatusUpdate(
+                                            scope.$index,
+                                            scope.row,
+                                            true,
+                                        )
+                                    "
+                                >
+                                    {{ '上架' }}
+                                </button>
+                            </div>
+                            <div>
+                                <button class="button_design p-1" @click="">
+                                    {{ '清除' }}
                                 </button>
                             </div>
                         </div>
@@ -91,6 +248,7 @@
         </div>
         <div class="d-flex justify-content-end mt-2">
             <el-pagination
+                v-show="showTable"
                 layout="prev, pager, next"
                 :total="tableData.length"
                 :page-size="pageNumber"
@@ -466,25 +624,6 @@
                                 返回
                             </button>
                         </div>
-                        <div
-                            v-show="
-                                showDetailType === '出版' &&
-                                showStatus == '審核中'
-                            "
-                        >
-                            <button
-                                class="button_design p-1"
-                                @click="confirmQualified()"
-                            >
-                                合格/上架
-                            </button>
-                            <button
-                                class="button_design p-1 ms-2"
-                                @click="fixRequestData()"
-                            >
-                                不合格/修正
-                            </button>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -495,23 +634,92 @@
 import api from '@/axios/axios.ts'
 import Cookies from 'js-cookie'
 import { Modal } from 'bootstrap'
+
 export default {
     data() {
         return {
-            showStatus: '審核中',
+            searchType: 'single',
+
+            //序列號搜尋
+            serialNumber_1: '',
+            serialNumber_2: '',
+            serialNumber_3: '',
+
+            //條件篩選搜尋
+            filterWord: {
+                forSale: {
+                    isFilter: false,
+                    value: '',
+                },
+                isForeign: {
+                    isFilter: false,
+                    value: '',
+                },
+                publisher: {
+                    isFilter: false,
+                    value: '',
+                },
+                type: {
+                    isFilter: false,
+                    value: [],
+                },
+                name: '',
+            },
+            props: { multiple: true, expandTrigger: 'hover' },
+            languageOption: [
+                {
+                    value: false,
+                    label: '中文',
+                },
+                {
+                    value: true,
+                    label: '外文',
+                },
+            ],
+            forSaleOption: [
+                {
+                    value: false,
+                    label: '未上架',
+                },
+                {
+                    value: true,
+                    label: '已上架',
+                },
+            ],
+            typeOption: [],
+            publisherOption: [],
+            searchErrorHint: '',
+
+            //table表
+            dataOutlineLoaded: true,
+            certifiedList: [],
+            showTable: false,
+
+            //換頁
             nowPage: 1, // 目前頁數
             pageNumber: 5, // 每頁要顯示幾筆
-            requestListData: [],
-            typeList: {},
+
+            //詳細內容
             bookDataDetail: {},
             dataDetailLoaded: false,
-            dataOutlineLoaded: false,
+            selectedBookDataOutline: {},
             showDetailType: '書籍',
             transitionName: 'slide-right',
-            selectedBookDataOutline: {},
+            typeList: {},
         }
     },
     computed: {
+        //table表
+        tableData() {
+            return this.certifiedList
+        },
+        showData() {
+            const start = (this.nowPage - 1) * this.pageNumber
+            const end = start + this.pageNumber
+            return this.tableData.slice(start, end)
+        },
+
+        //詳細內容
         rows() {
             const photosPerRow = 4
             const rows = []
@@ -529,37 +737,213 @@ export default {
             }
             return rows
         },
-        tableData() {
-            return this.requestListData.filter(
-                item => item.status === this.showStatus,
-            )
-        },
-        showData() {
-            const start = (this.nowPage - 1) * this.pageNumber
-            const end = start + this.pageNumber
-            return this.tableData.slice(start, end)
-        },
     },
     methods: {
-        async getRequestListData() {
+        //初始資料
+        getTypeData() {
+            const data = this.$store.state.generalInfo.typeList
+            this.typeList = this.$store.state.generalInfo.typeList
+            this.typeOption = Object.keys(data).map(key => ({
+                value: key,
+                label: data[key].name,
+            }))
+        },
+        getpublisherData() {
+            const data = this.$store.state.generalInfo.publisherList
+            this.publisherOption = Object.entries(data).map(([code, name]) => ({
+                value: code,
+                label: `${code}-${name}`,
+            }))
+        },
+        //搜尋處理(序列號)
+        checkSingleSerach() {
+            if (
+                this.serialNumber_1 == '' ||
+                this.serialNumber_2 == '' ||
+                this.serialNumber_3 == ''
+            ) {
+                this.searchErrorHint = '請填寫完整序列號'
+            } else {
+                let inputSerialNumber = `${this.serialNumber_1}_${this.serialNumber_2}_${this.serialNumber_3}`
+                this.getSingleSearchData(inputSerialNumber)
+            }
+        },
+        async getSingleSearchData(inputSerialNumber) {
             try {
-                const response = await api.post('/api/getAllRequestList', {})
+                this.dataOutlineLoaded = false
+                this.certifiedList = []
+                this.showTable = true
+                const response = await api.post(
+                    '/api/getDataOutlinebySerialNumber',
+                    {
+                        serialNumber: inputSerialNumber,
+                    },
+                )
                 if (response.data.success) {
-                    this.requestListData = response.data.data
+                    this.certifiedList = [response.data.data]
+                    this.dataOutlineLoaded = true
                 } else {
                     console.error(
-                        'Failed to getDataList:',
+                        'Failed to getDataDetail:',
                         response.data.message,
                     )
                 }
             } catch (error) {
-                console.error('Error Code:', error)
+                console.error('Error filterWord:', error)
             }
         },
+        //搜尋處理(條件)
+        handleForSaleChange(value) {
+            if (value.length == 0) {
+                this.filterWord.forSale.isFilter = false
+                this.filterWord.forSale.value = ''
+            } else {
+                this.filterWord.forSale.isFilter = true
+                this.filterWord.forSale.value = value[0]
+            }
+        },
+        handleForeignChange(value) {
+            if (value.length == 0) {
+                this.filterWord.isForeign.isFilter = false
+                this.filterWord.isForeign.value = ''
+            } else {
+                this.filterWord.isForeign.isFilter = true
+                this.filterWord.isForeign.value = value[0]
+            }
+        },
+        handlePublisherChange(value) {
+            if (value.length == 0) {
+                this.filterWord.publisher.isFilter = false
+                this.filterWord.publisher.value = ''
+            } else {
+                this.filterWord.publisher.isFilter = true
+                this.filterWord.publisher.value = value[0]
+            }
+        },
+        handleTypeChange(value) {
+            if (value.length == 0) {
+                this.filterWord.type.isFilter = false
+                this.filterWord.type.value = []
+            } else if (value.length > 1) {
+                this.filterWord.type.isFilter = true
+                this.filterWord.type.value = value.slice(0, 10).flat()
+            } else {
+                this.filterWord.type.isFilter = true
+                this.filterWord.type.value = value.flat()
+            }
+        },
+        checkFilterWord() {
+            if (
+                !this.filterWord.forSale.isFilter &&
+                !this.filterWord.isForeign.isFilter &&
+                !this.filterWord.publisher.isFilter &&
+                !this.filterWord.type.isFilter &&
+                this.filterWord.name == ''
+            ) {
+                this.searchErrorHint = '請至少填入一項篩選條件'
+            } else {
+                this.getSearchCertifiedList()
+                this.searchErrorHint = ''
+            }
+        },
+        async getSearchCertifiedList() {
+            try {
+                this.dataOutlineLoaded = false
+                this.certifiedList = []
+                this.showTable = true
+                const response = await api.post('/api/getFilterCertifiedList', {
+                    filterWord: this.filterWord,
+                })
+                if (response.data.success) {
+                    this.certifiedList = response.data.data
+                    this.dataOutlineLoaded = true
+                } else {
+                    console.error(
+                        'Failed to getDataDetail:',
+                        response.data.message,
+                    )
+                }
+            } catch (error) {
+                console.error('Error filterWord:', error)
+            }
+        },
+        // 上/下架
+        confirmforSaleStatusUpdate(index, row, value) {
+            let word = value ? '上架' : '下架'
+            this.$swal
+                .fire({
+                    title: `確認${word}`,
+                    text: `您確定要${word}該序列號為 ${row.serialNumber} 的商品嗎?`,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: '確定',
+                    cancelButtonText: '取消',
+                    reverseButtons: true,
+                })
+                .then(result => {
+                    if (result.isConfirmed) {
+                        this.$swal.fire({
+                            title: '處理中...',
+                            text: '正在更新狀態，請稍候',
+                            icon: 'info',
+                            allowOutsideClick: false,
+                            showConfirmButton: false,
+                            cancelButtonText: '取消',
+                            didOpen: () => {
+                                this.$swal.showLoading()
+                                this.updateForSaleStatus(index, row, value)
+                                    .then(() => {
+                                        this.$swal.close()
+                                        this.$swal.fire({
+                                            title: '成功',
+                                            text: '資料已成功更新',
+                                            icon: 'success',
+                                            confirmButtonText: '確定',
+                                            showCancelButton: false,
+                                        })
+                                    })
+                                    .catch(error => {
+                                        this.$swal.close()
+                                        this.$swal.fire({
+                                            title: '錯誤',
+                                            text: '更新過程中發生錯誤，請稍後重試',
+                                            icon: 'error',
+                                            confirmButtonText: '確定',
+                                        })
+                                        console.error(
+                                            'Error in update method:',
+                                            error,
+                                        )
+                                    })
+                            },
+                        })
+                    }
+                })
+        },
+        async updateForSaleStatus(index, row, value) {
+            try {
+                const response = await api.post('/api/updateForSaleStatus', {
+                    serialNumber: row.serialNumber,
+                    value: value,
+                })
+                if (response.data.success) {
+                    this.certifiedList[index].forSale = value
+                } else {
+                    console.error(
+                        'Failed to getDataDetail:',
+                        response.data.message,
+                    )
+                }
+            } catch (error) {
+                console.error('Error Data SerialNumber:', error)
+            }
+        },
+        //換頁
         handlePageChange(page) {
             this.nowPage = page
-            this.getShowData()
         },
+
+        //詳細內容
         async showBookDetail(index, row) {
             try {
                 const response = await api.post('/api/getBookDataDetailAdmin', {
@@ -579,9 +963,6 @@ export default {
                 console.error('Error Data SerialNumber:', error)
             }
         },
-        getTypeList() {
-            this.typeList = this.$store.state.generalInfo.typeList
-        },
         closeModal() {
             this.dataDetailLoaded = false
             this.bookDataDetail = {}
@@ -590,240 +971,79 @@ export default {
             var modal = Modal.getInstance(myModalEl)
             modal.hide()
         },
-        async getInit() {
-            await this.getRequestListData()
-            this.getTypeList()
-            this.dataOutlineLoaded = true
-        },
-        confirmQualified() {
-            this.$swal
-                .fire({
-                    title: '確認合格',
-                    text: `您確定該序列號為 ${this.bookDataDetail.serialNumber} 的資料合格嗎?`,
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonText: '確定',
-                    cancelButtonText: '取消',
-                    reverseButtons: true,
-                })
-                .then(result => {
-                    if (result.isConfirmed) {
-                        this.$swal.fire({
-                            title: '處理中...',
-                            text: '正在更新狀態，請稍候',
-                            icon: 'info',
-                            allowOutsideClick: false,
-                            showConfirmButton: false,
-                            cancelButtonText: '取消',
-                            didOpen: () => {
-                                this.$swal.showLoading()
-                                this.qualifiedDataToFireBase()
-                                    .then(() => {
-                                        this.$swal.close()
-                                        this.$swal
-                                            .fire({
-                                                title: '成功',
-                                                text: '資料已成功更新',
-                                                icon: 'success',
-                                                confirmButtonText: '確定',
-                                                showCancelButton: false,
-                                            })
-                                            .then(result => {
-                                                if (result.isConfirmed) {
-                                                    const index =
-                                                        this.requestListData.findIndex(
-                                                            item =>
-                                                                item.serialNumber ===
-                                                                serialNumber,
-                                                        )
-                                                    if (index !== -1) {
-                                                        this.requestListData.splice(
-                                                            index,
-                                                            1,
-                                                        )
-                                                    }
-                                                    this.closeModal()
-                                                }
-                                            })
-                                    })
-                                    .catch(error => {
-                                        this.$swal.close()
-                                        this.$swal.fire({
-                                            title: '錯誤',
-                                            text: '更新過程中發生錯誤，請稍後重試',
-                                            icon: 'error',
-                                            confirmButtonText: '確定',
-                                        })
-                                        console.error(
-                                            'Error in update method:',
-                                            error,
-                                        )
-                                    })
-                            },
-                        })
-                    }
-                })
-        },
-        async qualifiedDataToFireBase() {
-            try {
-                const response = await api.post('/api/dataCertified', {
-                    serialNumber: this.bookDataDetail.serialNumber,
-                })
-                if (response.data.success) {
-                    const index = this.requestListData.findIndex(
-                        item =>
-                            item.serialNumber ===
-                            this.selectedBookDataOutline.serialNumber,
-                    )
-                    if (index !== -1) {
-                        this.requestListData.splice(index, 1)
-                    }
-                } else {
-                    return Promise.reject(response.data.message)
-                }
-            } catch (error) {
-                console.error('Error in method:', error)
-                return Promise.reject(error)
-            }
-        },
-        fixRequestData() {
-            this.$swal
-                .fire({
-                    title: '請輸入修改事項',
-                    html: '<textarea id="swal-textarea" style="height: 300px;width:100%;z-index: 2000;"></textarea>',
-                    focusConfirm: false,
-                    showCancelButton: true,
-                    confirmButtonText: '確定',
-                    cancelButtonText: '取消',
-                    preConfirm: () => {
-                        const textareaValue = this.$swal
-                            .getPopup()
-                            .querySelector('#swal-textarea').value
-                        if (!textareaValue) {
-                            this.$swal.showValidationMessage('內容不可空白')
-                        } else if (textareaValue.length > 2000) {
-                            this.$swal.showValidationMessage(
-                                '內容不可超過2000個字符',
-                            )
-                        } else {
-                            this.selectedBookDataOutline.fixMessage =
-                                textareaValue
-                            return textareaValue
-                        }
-                    },
-                    didOpen: () => {
-                        document.querySelector('#swal-textarea').focus()
-                    },
-                })
-                .then(result => {
-                    if (result.isConfirmed) {
-                        this.$swal.fire({
-                            title: '處理中...',
-                            text: '正在更新狀態，請稍候',
-                            icon: 'info',
-                            allowOutsideClick: false,
-                            showConfirmButton: false,
-                            cancelButtonText: '取消',
-                            didOpen: () => {
-                                this.$swal.showLoading()
-                                this.fixMessageToFireBase()
-                                    .then(() => {
-                                        this.$swal.close()
-                                        this.$swal
-                                            .fire({
-                                                title: '成功',
-                                                text: '資料已成功更新',
-                                                icon: 'success',
-                                                confirmButtonText: '確定',
-                                                showCancelButton: false,
-                                            })
-                                            .then(result => {
-                                                if (result.isConfirmed) {
-                                                    const index =
-                                                        this.requestListData.findIndex(
-                                                            item =>
-                                                                item.serialNumber ===
-                                                                this
-                                                                    .selectedBookDataOutline
-                                                                    .serialNumber,
-                                                        )
-                                                    this.requestListData[
-                                                        index
-                                                    ].status = '待修改'
-                                                    this.closeModal()
-                                                }
-                                            })
-                                    })
-                                    .catch(error => {
-                                        this.$swal.close()
-                                        this.$swal.fire({
-                                            title: '錯誤',
-                                            text: '更新過程中發生錯誤，請稍後重試',
-                                            icon: 'error',
-                                            confirmButtonText: '確定',
-                                        })
-                                        console.error(
-                                            'Error in update method:',
-                                            error,
-                                        )
-                                    })
-                            },
-                        })
-                    }
-                })
-        },
-        async fixMessageToFireBase() {
-            try {
-                const response = await api.post('/api/dataNotCertified', {
-                    serialNumber: this.bookDataDetail.serialNumber,
-                    fixMessage: this.selectedBookDataOutline.fixMessage,
-                })
-                if (response.data.success) {
-                    const index = this.requestListData.findIndex(
-                        item =>
-                            item.serialNumber ===
-                            this.selectedBookDataOutline.serialNumber,
-                    )
-                    if (index !== -1) {
-                        this.requestListData[index].fixMessage =
-                            this.selectedBookDataOutline.fixMessage
-                        this.requestListData[index].status = '待修改'
-                    }
-                } else {
-                    return Promise.reject(response.data.message)
-                }
-            } catch (error) {
-                console.error('Error in method:', error)
-                return Promise.reject(error)
-            }
-        },
-        // async test() {
-        //     try {
-        //         const response = await api.post('/api/getPDFDownloadLink', {
-        //             serialNumber: '0001_T001_20240912085414',
-        //             uid: JSON.parse(Cookies.get('accountInfo')).uid,
-        //             fileName: '0001_T001_20240912085414.pdf',
-        //         })
-        //         if (response.data.success) {
-        //             const downloadUrl = response.data.url
-        //         } else {
-        //             return Promise.reject(response.data.message)
-        //         }
-        //     } catch (error) {
-        //         console.error('Error in method:', error)
-        //         return Promise.reject(error)
-        //     }
-        // },
     },
     beforeMount() {
-        this.getInit()
+        this.getTypeData()
+        this.getpublisherData()
     },
-    mounted() {},
 }
 </script>
 <style lang="scss" scoped>
 @import '../../scss/aboutuser/styles.scss';
 @import '../../scss/slideTable.scss';
+//搜尋
+.form-check-input:checked {
+    background-color: var(--color-primary);
+    border-color: var(--color-primary);
+    box-shadow:
+        inset 0 1px 1px rgba(0, 0, 0, 0.075),
+        0 0 8px var(--color-primary);
+}
+.form-check-input:focus {
+    border-color: var(--color-primary);
+    box-shadow:
+        inset 0 1px 1px rgba(0, 0, 0, 0.075),
+        0 0 8px var(--color-primary);
+}
+.image-container {
+    display: flex;
+    flex-wrap: wrap;
+}
+.image-wrapper {
+    margin: 10px;
+    text-align: center;
+}
+img {
+    max-width: 150px;
+    max-height: 150px;
+    object-fit: cover;
+}
+::v-deep .el-input {
+    height: 100%;
+    .el-input__inner {
+        height: 100%;
+        border-radius: 0%;
+    }
+}
+::v-deep .el-cascader {
+    height: 100%;
+    width: 100%;
+    .el-cascader__tags {
+        display: inline-flex;
+        margin: 2px;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        &::-webkit-scrollbar {
+            height: 10px;
+            width: 12px;
+            background-color: transparent;
+        }
+        &::-webkit-scrollbar-thumb {
+            background-color: rgba(102, 102, 102, 0.4);
+            border-radius: 10px;
+            border: 0px solid transparent;
+        }
+        &::-webkit-scrollbar-track {
+            background-color: transparent;
+        }
+    }
+}
+.search_btn {
+    border-radius: 0px;
+    height: 100%;
+    width: 100%;
+}
+//table表
 .content {
     margin-top: 10px;
     border: 3px solid var(--color-primary);
@@ -872,6 +1092,7 @@ export default {
     color: var(--color-content-text);
     background-color: var(--color-content-background);
 }
+//詳細內容
 .close_btn {
     background-color: transparent;
     &:hover {

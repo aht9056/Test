@@ -24,13 +24,13 @@
                                     class="form-check-input"
                                     type="radio"
                                     name="languageRadio"
-                                    id="isForiegnRadio_false"
+                                    id="isForeignRadio_false"
                                     :value="false"
-                                    v-model="bookMessage.isForiegn"
+                                    v-model="bookMessage.isForeign"
                                 />
                                 <label
                                     class="form-check-label"
-                                    for="isForiegnRadio_false"
+                                    for="isForeignRadio_false"
                                 >
                                     中文
                                 </label>
@@ -40,13 +40,13 @@
                                     class="form-check-input"
                                     type="radio"
                                     name="languageRadio"
-                                    id="isForiegnRadio_true"
+                                    id="isForeignRadio_true"
                                     :value="true"
-                                    v-model="bookMessage.isForiegn"
+                                    v-model="bookMessage.isForeign"
                                 />
                                 <label
                                     class="form-check-label"
-                                    for="isForiegnRadio_true"
+                                    for="isForeignRadio_true"
                                 >
                                     外文
                                 </label>
@@ -372,7 +372,7 @@ export default {
                 name: '',
                 type: 'T001',
                 publisherName: '',
-                isForiegn: false,
+                isForeign: false,
                 serialNumber: '',
                 fixMessage: '',
                 read: false,

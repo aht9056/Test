@@ -100,6 +100,9 @@ button {
     border-radius: var(--size-radius);
     font-weight: 900;
 }
+button:not(.button_design):hover {
+    background-color: var(--color-hover-primary);
+}
 .button_design {
     background: none;
     color: var(--color-content-text);

@@ -2,6 +2,7 @@ import Vue from 'vue'
 import {
     Button,
     Badge,
+    Cascader,
     Checkbox,
     CheckboxGroup,
     Dialog,
@@ -21,6 +22,7 @@ import {
 import '../scss/element-variables.scss'
 Vue.use(Button),
     Vue.use(Badge),
+    Vue.use(Cascader),
     Vue.use(Checkbox),
     Vue.use(CheckboxGroup),
     Vue.use(Dialog),
