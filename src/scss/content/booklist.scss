@@ -1,0 +1,145 @@
+.booklist {
+    border-top: 3px solid var(--color-content-bookList);
+    background-color: var(--color-content-bookList-background);
+    @media (max-width: 991.98px) and (min-width: 576px) {
+        .booklist_content:nth-child(odd) {
+            border-right: 1px solid var(--color-content-bookList-line);
+        }
+    }
+    .keyword {
+        font-size: 1.2rem;
+    }
+    .booklist_content {
+        border-bottom: 1px solid var(--color-content-bookList-line);
+
+        @media (max-width: 991.98px) and (min-width: 768px) {
+            & {
+                height: 240px; /* 根据需要调整高度 */
+            }
+        }
+        @media (max-width: 424px) {
+            & {
+                height: 240px; /* 根据需要调整高度 */
+            }
+        }
+    }
+    .photo {
+        position: relative;
+        height: 200px;
+        @media (max-width: 991.98px) {
+            height: 230px;
+        }
+        img {
+            max-width: 100%;
+            max-height: 100%;
+            box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.5);
+        }
+        .badge {
+            position: absolute;
+            top: 10px; /* 根据需要调整位置 */
+            left: 10px; /* 根据需要调整位置 */
+            background-color: red; /* 背景颜色 */
+            color: white; /* 字体颜色 */
+            padding: 5px 10px; /* 内边距 */
+            font-size: 0.9rem; /* 字体大小 */
+            border-radius: 3px; /* 可选的圆角效果 */
+        }
+    }
+    .info {
+        height: 200px;
+        @media (max-width: 991.98px) {
+            height: 230px;
+        }
+    }
+    .title {
+        a {
+            color: var(--color-primary);
+            cursor: pointer;
+            font-size: 1.2rem;
+            line-height: 22px;
+            height: 100%;
+            overflow-y: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 1;
+            -webkit-box-orient: vertical;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            text-decoration: underline;
+            @media (max-width: 991.98px) {
+                -webkit-line-clamp: 3;
+            }
+        }
+    }
+    .author {
+        flex-wrap: wrap;
+        align-items: flex-end;
+        span + span {
+            margin-left: 5px;
+        }
+    }
+    .description {
+        @media (max-width: 991.98px) {
+            display: none !important;
+        }
+        div {
+            line-height: 20px;
+            height: 100%;
+            overflow-y: hidden;
+            font-size: 14px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            text-overflow: ellipsis;
+            overflow: hidden;
+        }
+    }
+    .sale_tag {
+        color: var(--color-primary);
+        @media (max-width: 991.98px) {
+            display: none !important;
+        }
+    }
+    .price {
+        flex-wrap: wrap;
+        span + span {
+            margin-left: 5px;
+        }
+    }
+    .shoppingCar_btn {
+        color: var(--color-content-text);
+        border: 2px solid transparent;
+        font-size: 1.2rem;
+        border-radius: 5px;
+        background-clip: padding-box, border-box;
+        background-origin: padding-box, border-box;
+        background-image: linear-gradient(
+                to right,
+                var(--color-content-bookList-background),
+                var(--color-content-bookList-background)
+            ),
+            linear-gradient(45deg, var(--color-secondary), var(--color-primary));
+        &:hover {
+            color: var(--color-primary);
+            transform: scale(1.05);
+            transition: transform 0.2s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        cursor: pointer;
+    }
+}
+.el-dropdown-link {
+    color: var(--color-content-text);
+}
+.el-dropdown-menu {
+    margin: 0px;
+    padding: 0px;
+    border: 0px;
+}
+.el-dropdown-menu__item {
+    color: var(--color-content-text);
+    background-color: var(--color-navbar-hover-background);
+    &:hover {
+        color: var(--color-primary);
+        background-color: var(--color-navbar-hover-background);
+    }
+}
