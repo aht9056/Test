@@ -159,6 +159,7 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
+@import '../scss/content/loading.scss';
 @import '../scss/aboutuser/styles.scss';
 .position-relative {
     background-color: var(--color-content-background);

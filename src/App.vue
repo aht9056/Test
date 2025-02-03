@@ -8,7 +8,17 @@ import api from '@/axios/axios.ts'
 export default {
     components: {},
     computed: {},
-    methods: {},
+    methods: {
+        async getTypeList() {
+            try {
+                const response = await api.get('/api/getTypeList')
+                this.$store.state.generalInfo.typeList = response.data.typeList
+                console.log(this.$store.state.generalInfo.typeList)
+            } catch (error) {
+                console.error('Error fetching type list:', error)
+            }
+        },
+    },
     created() {
         const auth = getAuth()
         auth.onAuthStateChanged(user => {
@@ -29,7 +39,10 @@ export default {
             }
         })
     },
-    beforeMount() {},
+    beforeMount() {
+        this.getTypeList()
+    },
+    mounted() {},
 }
 </script>
 

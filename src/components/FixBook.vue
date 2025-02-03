@@ -29,7 +29,7 @@
                             class="input__field"
                             type="text"
                             placeholder=""
-                            v-model="bookData.name"
+                            v-model="bookMessage.name"
                         />
                         <span class="input__label">書籍名稱</span>
                         <small class="errorhint">{{ errorHint.name }}</small>
@@ -110,7 +110,7 @@
                                     name="subTypeCheckBox"
                                     :id="'subTypeCheckBox_' + index"
                                     :value="subType"
-                                    v-model="bookData.subTypes"
+                                    v-model="bookMessage.subTypes"
                                 />
                                 <label
                                     class="form-check-label"
@@ -127,7 +127,7 @@
                     </div>
                     <div class="input">
                         <div class="input__field d-flex flex-wrap">
-                            <TagInput v-model="bookData.bookTag" @input="" />
+                            <TagInput v-model="bookMessage.bookTag" @input="" />
                         </div>
                         <span class="input__label">書籍標籤</span>
                         <small class="errorhint">{{ errorHint.bookTag }}</small>
@@ -137,7 +137,7 @@
                             class="input__field"
                             type="text"
                             placeholder=""
-                            v-model="bookData.description"
+                            v-model="bookMessage.description"
                             readonly
                         />
                         <span class="input__label">書籍介紹</span>
@@ -149,7 +149,9 @@
                         <div class="input__field d-flex flex-wrap flex-column">
                             <UploadPicture
                                 :images="images"
-                                :originContentImages="bookData.contentPagePhoto"
+                                :originContentImages="
+                                    bookMessage.contentPagePhoto
+                                "
                                 @files-selected="handleImages"
                             />
                         </div>
@@ -161,7 +163,7 @@
                             <UploadPdf
                                 :nowfile="pdfFile"
                                 :originPdf="true"
-                                :serialNumber="bookData.serialNumber"
+                                :serialNumber="bookMessage.serialNumber"
                                 @file-selected="handlePdf"
                             />
                         </div>
@@ -192,7 +194,7 @@
                     </div>
                     <div class="input">
                         <div class="input__field d-flex flex-wrap">
-                            <PickDate v-model="bookData.publicationDate" />
+                            <PickDate v-model="bookMessage.publicationDate" />
                         </div>
                         <span class="input__label">出版日期</span>
                         <small class="errorhint">{{
@@ -202,7 +204,7 @@
                     <div class="input">
                         <div class="input__field d-flex flex-wrap">
                             <TagInput
-                                v-model="bookData.author"
+                                v-model="bookMessage.author"
                                 :suggestions="[]"
                                 @input=""
                             />
@@ -235,7 +237,7 @@
                                         name="entityRadio"
                                         id="entityRadio_true"
                                         :value="true"
-                                        v-model="bookData.entity"
+                                        v-model="bookMessage.entity"
                                     />
                                     <label
                                         class="form-check-label"
@@ -251,7 +253,7 @@
                                         name="entityRadio"
                                         id="entityRadio_false"
                                         :value="false"
-                                        v-model="bookData.entity"
+                                        v-model="bookMessage.entity"
                                     />
                                     <label
                                         class="form-check-label"
@@ -264,21 +266,21 @@
                             </div>
                             <span class="input__label">實體書</span>
                         </div>
-                        <div v-if="bookData.entity" class="mt-1 ms-1 input">
+                        <div v-if="bookMessage.entity" class="mt-1 ms-1 input">
                             <input
                                 class="input__field h-100"
                                 type="number"
                                 placeholder=""
-                                v-model="bookData.entityPrice"
+                                v-model="bookMessage.entityPrice"
                             />
                             <span class="input__label">定價</span>
                         </div>
-                        <div v-if="bookData.entity" class="mt-1 ms-1 input">
+                        <div v-if="bookMessage.entity" class="mt-1 ms-1 input">
                             <input
                                 class="input__field h-100"
                                 type="number"
                                 placeholder=""
-                                v-model="bookData.stock"
+                                v-model="bookMessage.stock"
                             />
                             <span class="input__label">庫存</span>
                         </div>
@@ -294,7 +296,7 @@
                                         name="eBookRadio"
                                         id="eBookRadio_true"
                                         :value="true"
-                                        v-model="bookData.ebook"
+                                        v-model="bookMessage.ebook"
                                     />
                                     <label
                                         class="form-check-label"
@@ -310,7 +312,7 @@
                                         name="eBookRadio"
                                         id="eBookRadio_false"
                                         :value="false"
-                                        v-model="bookData.ebook"
+                                        v-model="bookMessage.ebook"
                                     />
                                     <label
                                         class="form-check-label"
@@ -323,14 +325,14 @@
                             <span class="input__label">電子書</span>
                         </div>
                         <div
-                            v-if="bookData.ebook"
+                            v-if="bookMessage.ebook"
                             class="mt-1 ms-1 input flex-grow-1"
                         >
                             <input
                                 class="input__field h-100"
                                 type="number"
                                 placeholder=""
-                                v-model="bookData.ebookPrice"
+                                v-model="bookMessage.ebookPrice"
                             />
                             <span class="input__label">定價</span>
                         </div>
@@ -406,11 +408,11 @@ export default {
             this.nowSubTypesInfo = this.typeList[this.bookMessage.type].subTypes
         },
         changeTypeRadio(key) {
-            this.bookData.subTypes = []
+            this.bookMessage.subTypes = []
             this.nowSubTypesInfo = this.typeList[key].subTypes
         },
         handleDatePick(date) {
-            this.bookData.publicationDate = date
+            this.bookMessage.publicationDate = date
         },
         handleImages(files) {
             this.images = files
@@ -419,10 +421,16 @@ export default {
             this.pdfFile = file
         },
         getDescription(choice) {
+            let existingValue = ''
+            if (choice == 'book') {
+                existingValue = this.bookMessage.description
+            } else {
+                existingValue = this.bookData.authorIntro
+            }
             this.$swal
                 .fire({
                     title: '請填寫介紹內文',
-                    html: '<textarea id="swal-textarea" style="height: 300px;width:100%"></textarea>',
+                    html: `<textarea id="swal-textarea" style="height: 300px;width:100%">${existingValue}</textarea>`,
                     focusConfirm: false,
                     showCancelButton: true,
                     confirmButtonText: '確定',
@@ -433,7 +441,7 @@ export default {
                             .getPopup()
                             .querySelector('#swal-textarea')
                         if (choice == 'book') {
-                            textarea.value = this.bookData.description
+                            textarea.value = this.bookMessage.description
                         } else {
                             textarea.value = this.bookData.authorIntro
                         }
@@ -451,7 +459,7 @@ export default {
                             )
                         }
                         if (choice == 'book') {
-                            this.bookData.description = textareaValue
+                            this.bookMessage.description = textareaValue
                             return textareaValue
                         } else {
                             this.bookData.authorIntro = textareaValue
@@ -463,10 +471,10 @@ export default {
         },
         checkBookData() {
             let flag = true
-            if (this.bookData.name === '') {
+            if (this.bookMessage.name === '') {
                 this.errorHint.name = '書名不可為空'
                 flag = false
-            } else if (this.bookData.name.length > 100) {
+            } else if (this.bookMessage.name.length > 100) {
                 this.errorHint.name = '書名長度不可大於100個字符串'
                 flag = false
             } else {
@@ -478,19 +486,19 @@ export default {
             } else {
                 this.errorHint.type = ''
             }
-            if (this.bookData.subTypes.length === 0) {
+            if (this.bookMessage.subTypes.length === 0) {
                 this.errorHint.subTypes = '請至少選擇一項子類型'
                 flag = false
             } else {
                 this.errorHint.subTypes = ''
             }
-            if (this.bookData.bookTag.length > 15) {
+            if (this.bookMessage.bookTag.length > 15) {
                 this.errorHint.bookTag = '標籤數量不得超過15個'
                 flag = false
             } else {
                 this.errorHint.bookTag = ''
             }
-            if (this.bookData.description === '') {
+            if (this.bookMessage.description === '') {
                 this.errorHint.description = '書籍介紹不可為空'
                 flag = false
             } else {
@@ -498,23 +506,23 @@ export default {
             }
             if (
                 this.images.length === 0 &&
-                this.bookData.contentPagePhoto.length === 0
+                this.bookMessage.contentPagePhoto.length === 0
             ) {
                 this.errorHint.photo = '請至少放上一張圖片'
                 flag = false
             } else {
                 this.errorHint.photo = ''
             }
-            if (this.bookData.publicationDate === '') {
+            if (this.bookMessage.publicationDate === '') {
                 this.errorHint.publicationDate = '出版日期不可為空'
                 flag = false
             } else {
                 this.errorHint.publicationDate = ''
             }
-            if (this.bookData.author.length > 6) {
+            if (this.bookMessage.author.length > 6) {
                 this.errorHint.author = '作者人數不得超過6個'
                 flag = false
-            } else if (this.bookData.author.length === 0) {
+            } else if (this.bookMessage.author.length === 0) {
                 this.errorHint.author = '作者人數不得為0'
                 flag = false
             } else {
@@ -524,18 +532,18 @@ export default {
                 this.errorHint.authorIntro = '作者介紹不可為空'
                 flag = false
             }
-            if (!this.bookData.entity && !this.bookData.ebook) {
+            if (!this.bookMessage.entity && !this.bookMessage.ebook) {
                 this.errorHint.saleType = '請至少選擇一種販售方式'
             } else {
                 this.errorHint.saleType = ''
             }
-            if (this.bookData.entity && this.bookData.entityPrice == 0) {
+            if (this.bookMessage.entity && this.bookMessage.entityPrice == 0) {
                 this.errorHint.entityPrice = '價格不可為0'
                 flag = false
             } else {
                 this.errorHint.entityPrice = ''
             }
-            if (this.bookData.ebook && this.bookData.ebookPrice == 0) {
+            if (this.bookMessage.ebook && this.bookMessage.ebookPrice == 0) {
                 this.errorHint.ebookPrice = '價格不可為0'
                 flag = false
             } else {
@@ -553,7 +561,7 @@ export default {
                 this.updateLastUpdateTime()
                 this.bookMessage.status = '審核中'
                 this.bookMessage.read = false
-                this.bookMessage.name = this.bookData.name
+                this.bookData.name = this.bookMessage.name
                 this.$swal.fire({
                     title: '處理中...',
                     text: '正在上傳資料，請稍候',
@@ -621,7 +629,7 @@ export default {
                 const response = await api.post('/api/uploadBookRequest', {
                     images: imagesBase64,
                     pdf: pdfBase64,
-                    serialNumber: this.bookData.serialNumber,
+                    serialNumber: this.bookMessage.serialNumber,
                     bookData: this.bookData,
                     bookMessage: this.bookMessage,
                     code: this.$store.state.userInfo.userInfoData.code,

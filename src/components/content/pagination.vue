@@ -25,6 +25,7 @@
             :key="page"
             @click="goToPage(page)"
             :class="['page-button', { active: currentPage === page }]"
+            :disabled="currentPage === page"
         >
             {{ page }}
         </button>
@@ -54,16 +55,28 @@
         </button>
     </div>
 </template>
+
 <script>
 export default {
+    props: {
+        value: {
+            type: Number,
+            default: 1,
+        },
+        totalPages: {
+            type: Number,
+            default: 1,
+        },
+    },
     data() {
         return {
-            currentPage: 1,
-            totalPages: 50,
             maxVisiblePages: 5,
         }
     },
     computed: {
+        currentPage() {
+            return this.value
+        },
         startPage() {
             return Math.max(
                 this.currentPage - Math.floor(this.maxVisiblePages / 2),
@@ -87,7 +100,9 @@ export default {
     methods: {
         goToPage(page) {
             if (page >= 1 && page <= this.totalPages) {
-                this.currentPage = page
+                const isIncreasing = page > this.currentPage
+                this.$emit('input', page)
+                this.$emit('page-changed', page, isIncreasing)
             }
         },
         goToFirstPage() {
@@ -105,6 +120,7 @@ export default {
     },
 }
 </script>
+
 <style lang="scss" scoped>
 .pagination-container {
     display: flex;

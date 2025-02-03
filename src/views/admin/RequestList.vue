@@ -115,7 +115,7 @@
                                 class="modal-title fs-6"
                                 id="detailDataModalLabel"
                             >
-                                {{ bookDataDetail.serialNumber }}
+                                {{ selectedBookDataOutline.serialNumber }}
                             </h2>
                             <div>
                                 <button
@@ -188,7 +188,9 @@
                                 <table class="table">
                                     <tr>
                                         <th>書籍名稱</th>
-                                        <td>{{ bookDataDetail.name }}</td>
+                                        <td>
+                                            {{ selectedBookDataOutline.name }}
+                                        </td>
                                     </tr>
                                     <tr>
                                         <th>語言分類</th>
@@ -218,14 +220,14 @@
                                             <template
                                                 v-for="(
                                                     subType, index
-                                                ) in bookDataDetail.subTypes"
+                                                ) in selectedBookDataOutline.subTypes"
                                             >
                                                 {{ subType }}
                                                 <template
                                                     v-if="
                                                         index !=
-                                                        bookDataDetail.subTypes
-                                                            .length -
+                                                        selectedBookDataOutline
+                                                            .subTypes.length -
                                                             1
                                                     "
                                                 >
@@ -240,14 +242,14 @@
                                             <template
                                                 v-for="(
                                                     tag, index
-                                                ) in bookDataDetail.bookTag"
+                                                ) in selectedBookDataOutline.bookTag"
                                             >
                                                 {{ tag }}
                                                 <template
                                                     v-if="
                                                         index !=
-                                                        bookDataDetail.bookTag
-                                                            .length -
+                                                        selectedBookDataOutline
+                                                            .bookTag.length -
                                                             1
                                                     "
                                                 >
@@ -261,7 +263,7 @@
                                         <td class="p-1">
                                             <textarea
                                                 v-model="
-                                                    bookDataDetail.description
+                                                    selectedBookDataOutline.description
                                                 "
                                                 readonly
                                             ></textarea>
@@ -342,7 +344,9 @@
                                     <tr>
                                         <th>出版日期</th>
                                         <td colspan="5">
-                                            {{ bookDataDetail.publicationDate }}
+                                            {{
+                                                selectedBookDataOutline.publicationDate
+                                            }}
                                         </td>
                                     </tr>
                                     <tr>
@@ -351,14 +355,14 @@
                                             <template
                                                 v-for="(
                                                     tag, index
-                                                ) in bookDataDetail.author"
+                                                ) in selectedBookDataOutline.author"
                                             >
                                                 {{ tag }}
                                                 <template
                                                     v-if="
                                                         index !=
-                                                        bookDataDetail.author
-                                                            .length -
+                                                        selectedBookDataOutline
+                                                            .author.length -
                                                             1
                                                     "
                                                 >
@@ -380,16 +384,25 @@
                                     </tr>
                                     <tr>
                                         <th>實體書販售</th>
-                                        <template v-if="bookDataDetail.entity">
+                                        <template
+                                            v-if="
+                                                selectedBookDataOutline.entity
+                                            "
+                                        >
                                             <td>有</td>
                                             <td class="title">價格</td>
                                             <td>
                                                 NT$
-                                                {{ bookDataDetail.entityPrice }}
+                                                {{
+                                                    selectedBookDataOutline.entityPrice
+                                                }}
                                             </td>
                                             <td class="title">庫存</td>
                                             <td>
-                                                {{ bookDataDetail.stock }} 本
+                                                {{
+                                                    selectedBookDataOutline.stock
+                                                }}
+                                                本
                                             </td>
                                         </template>
                                         <template v-else>
@@ -402,12 +415,16 @@
                                     </tr>
                                     <tr>
                                         <th>電子書販售</th>
-                                        <template v-if="bookDataDetail.ebook">
+                                        <template
+                                            v-if="selectedBookDataOutline.ebook"
+                                        >
                                             <td>有</td>
                                             <td class="title">價格</td>
                                             <td colspan="3">
                                                 NT$
-                                                {{ bookDataDetail.ebookPrice }}
+                                                {{
+                                                    selectedBookDataOutline.ebookPrice
+                                                }}
                                             </td>
                                         </template>
                                         <template v-else>
@@ -517,11 +534,11 @@ export default {
             const rows = []
             for (
                 let i = 0;
-                i < this.bookDataDetail.contentPagePhoto.length;
+                i < this.selectedBookDataOutline.contentPagePhoto.length;
                 i += photosPerRow
             ) {
                 rows.push(
-                    this.bookDataDetail.contentPagePhoto.slice(
+                    this.selectedBookDataOutline.contentPagePhoto.slice(
                         i,
                         i + photosPerRow,
                     ),
@@ -599,7 +616,7 @@ export default {
             this.$swal
                 .fire({
                     title: '確認合格',
-                    text: `您確定該序列號為 ${this.bookDataDetail.serialNumber} 的資料合格嗎?`,
+                    text: `您確定該序列號為 ${this.selectedBookDataOutline.serialNumber} 的資料合格嗎?`,
                     icon: 'warning',
                     showCancelButton: true,
                     confirmButtonText: '確定',
@@ -634,7 +651,9 @@ export default {
                                                         this.requestListData.findIndex(
                                                             item =>
                                                                 item.serialNumber ===
-                                                                serialNumber,
+                                                                this
+                                                                    .selectedBookDataOutline
+                                                                    .serialNumber,
                                                         )
                                                     if (index !== -1) {
                                                         this.requestListData.splice(
@@ -667,7 +686,7 @@ export default {
         async qualifiedDataToFireBase() {
             try {
                 const response = await api.post('/api/dataCertified', {
-                    serialNumber: this.bookDataDetail.serialNumber,
+                    serialNumber: this.selectedBookDataOutline.serialNumber,
                 })
                 if (response.data.success) {
                     const index = this.requestListData.findIndex(
@@ -775,7 +794,7 @@ export default {
         async fixMessageToFireBase() {
             try {
                 const response = await api.post('/api/dataNotCertified', {
-                    serialNumber: this.bookDataDetail.serialNumber,
+                    serialNumber: this.selectedBookDataOutline.serialNumber,
                     fixMessage: this.selectedBookDataOutline.fixMessage,
                 })
                 if (response.data.success) {
@@ -822,6 +841,7 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
+@import '../../scss/content/loading.scss';
 @import '../../scss/aboutuser/styles.scss';
 @import '../../scss/slideTable.scss';
 .content {

@@ -12,7 +12,7 @@ export const bookList = [
             '本書深入探討成功企業家的思維模式，從創新到領導的各個方面提供實用建議。',
         stock: '30',
         price: 2580,
-        discount: 85,
+        discount: 0,
         sold: 12,
         saleTag: ['實體書', '熱銷中'],
         bookTag: ['領導力', '創新思維', '企業管理', '成功案例'],
