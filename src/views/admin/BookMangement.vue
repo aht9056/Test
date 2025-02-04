@@ -791,7 +791,7 @@ export default {
                 this.certifiedList = []
                 this.showTable = true
                 const response = await api.post(
-                    '/api/getDataOutlinebySerialNumber',
+                    '/getDataOutlinebySerialNumber',
                     {
                         serialNumber: inputSerialNumber,
                     },
@@ -868,7 +868,7 @@ export default {
                 this.dataOutlineLoaded = false
                 this.certifiedList = []
                 this.showTable = true
-                const response = await api.post('/api/getFilterCertifiedList', {
+                const response = await api.post('/getFilterCertifiedList', {
                     filterWord: this.filterWord,
                 })
                 if (response.data.success) {
@@ -939,7 +939,7 @@ export default {
         },
         async updateForSaleStatus(index, row, value) {
             try {
-                const response = await api.post('/api/updateForSaleStatus', {
+                const response = await api.post('/updateForSaleStatus', {
                     serialNumber: row.serialNumber,
                     value: value,
                 })
@@ -963,7 +963,7 @@ export default {
         //詳細內容
         async showBookDetail(index, row) {
             try {
-                const response = await api.post('/api/getBookDataDetailAdmin', {
+                const response = await api.post('/getBookDataDetailAdmin', {
                     serialNumber: row.serialNumber,
                 })
                 if (response.data.success) {

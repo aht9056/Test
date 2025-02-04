@@ -11,7 +11,7 @@ export default {
     methods: {
         async getTypeList() {
             try {
-                const response = await api.get('/api/getTypeList')
+                const response = await api.get('/getTypeList')
                 this.$store.state.generalInfo.typeList = response.data.typeList
                 console.log(this.$store.state.generalInfo.typeList)
             } catch (error) {

@@ -560,7 +560,7 @@ export default {
     methods: {
         async getRequestListData() {
             try {
-                const response = await api.post('/api/getAllRequestList', {})
+                const response = await api.post('/getAllRequestList', {})
                 if (response.data.success) {
                     this.requestListData = response.data.data
                 } else {
@@ -579,7 +579,7 @@ export default {
         },
         async showBookDetail(index, row) {
             try {
-                const response = await api.post('/api/getBookDataDetailAdmin', {
+                const response = await api.post('/getBookDataDetailAdmin', {
                     serialNumber: row.serialNumber,
                 })
                 if (response.data.success) {
@@ -685,7 +685,7 @@ export default {
         },
         async qualifiedDataToFireBase() {
             try {
-                const response = await api.post('/api/dataCertified', {
+                const response = await api.post('/dataCertified', {
                     serialNumber: this.selectedBookDataOutline.serialNumber,
                 })
                 if (response.data.success) {
@@ -793,7 +793,7 @@ export default {
         },
         async fixMessageToFireBase() {
             try {
-                const response = await api.post('/api/dataNotCertified', {
+                const response = await api.post('/dataNotCertified', {
                     serialNumber: this.selectedBookDataOutline.serialNumber,
                     fixMessage: this.selectedBookDataOutline.fixMessage,
                 })
@@ -818,7 +818,7 @@ export default {
         },
         // async test() {
         //     try {
-        //         const response = await api.post('/api/getPDFDownloadLink', {
+        //         const response = await api.post('/getPDFDownloadLink', {
         //             serialNumber: '0001_T001_20240912085414',
         //             uid: JSON.parse(Cookies.get('accountInfo')).uid,
         //             fileName: '0001_T001_20240912085414.pdf',

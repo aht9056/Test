@@ -627,7 +627,7 @@ export default {
 
                 const pdfBase64 = await this.convertFileToBase64(this.pdfFile)
 
-                const response = await api.post('/api/addBookRequest', {
+                const response = await api.post('/addBookRequest', {
                     images: imagesBase64,
                     pdf: pdfBase64,
                     serialNumber: this.bookData.serialNumber,

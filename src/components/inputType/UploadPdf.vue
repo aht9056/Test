@@ -79,7 +79,7 @@ export default {
         },
         async getPdfLink() {
             try {
-                const response = await api.post('/api/getPDFDownloadLink', {
+                const response = await api.post('/getPDFDownloadLink', {
                     serialNumber: this.mySerialNumber,
                     uid: JSON.parse(Cookies.get('accountInfo')).uid,
                     fileName: this.mySerialNumber + '.pdf',

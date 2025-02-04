@@ -108,7 +108,7 @@ export default {
         async checkUid() {
             const uid = JSON.parse(Cookies.get('accountInfo')).uid
             try {
-                const response = await api.post('/api/checkPermission', { uid })
+                const response = await api.post('/checkPermission', { uid })
                 if (response.data.success) {
                     if (response.data.exists == 'admin') {
                         this.$store.state.userInfo.userInfoData =
@@ -126,7 +126,7 @@ export default {
         },
         async getTypeList() {
             try {
-                const response = await api.get('/api/getTypeList')
+                const response = await api.get('/getTypeList')
                 return response
             } catch (error) {
                 console.error('Error fetching type list:', error)
@@ -135,7 +135,7 @@ export default {
         },
         async getPublisherList() {
             try {
-                const response = await api.get('/api/getPublisherList')
+                const response = await api.get('/getPublisherList')
                 return response
             } catch (error) {
                 console.error('Error fetching publisher list:', error)

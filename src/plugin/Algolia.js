@@ -1,8 +1,8 @@
 import { algoliasearch } from 'algoliasearch' // 使用 import
 
 // 初始化 Algolia 客戶端和索引
-const appID = '196RB4GOLF'
-const apiKey = '4b4fefeb718060277bbeed56e5d74d6e'
+const appID = process.env.VUE_APP_ALGOLIA_APP_ID
+const apiKey = process.env.VUE_APP_ALGOLIA_API_KEY
 const indexName = 'bookDataOutline'
 
 const client = algoliasearch(appID, apiKey)

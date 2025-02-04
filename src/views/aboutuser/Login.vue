@@ -140,7 +140,7 @@ export default {
         },
         async checkUid() {
             try {
-                const response = await api.post('/api/checkPermission', {
+                const response = await api.post('/checkPermission', {
                     uid: this.$store.state.userInfo.user.uid,
                 })
                 if (response.data.success) {

@@ -2,8 +2,10 @@ import axios from 'axios'
 import Swal from 'sweetalert2'
 import router from '@/router'
 import store from '@/store'
+const baseURL = process.env.VUE_APP_API_BASE_URL
 const createApi = () => {
     const api = axios.create({
+        baseURL,
         timeout: 20000,
         headers: {
             'Content-Type': 'application/json',

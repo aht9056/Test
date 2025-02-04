@@ -618,7 +618,7 @@ export default {
     methods: {
         async getRequestListData() {
             try {
-                const response = await api.post('/api/getRequestList', {
+                const response = await api.post('/getRequestList', {
                     code: this.$store.state.userInfo.userInfoData.code,
                 })
                 if (response.data.success) {
@@ -641,7 +641,7 @@ export default {
         async showBookDetail(index, row) {
             try {
                 const response = await api.post(
-                    '/api/getRequestListDataDetailPublisher',
+                    '/getRequestListDataDetailPublisher',
                     {
                         serialNumber: row.serialNumber,
                         readStatus: true,
@@ -670,7 +670,7 @@ export default {
         async fixBookDetail(index, row) {
             try {
                 const response = await api.post(
-                    '/api/getRequestListDataDetailPublisher',
+                    '/getRequestListDataDetailPublisher',
                     {
                         serialNumber: row.serialNumber,
                         readStatus: true,
@@ -769,7 +769,7 @@ export default {
         },
         async deleteToFirebase(serialNumber) {
             try {
-                const response = await api.post('/api/deleteRequest', {
+                const response = await api.post('/deleteRequest', {
                     serialNumber: serialNumber,
                 })
 

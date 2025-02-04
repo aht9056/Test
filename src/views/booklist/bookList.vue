@@ -300,7 +300,7 @@
 </template>
 
 <script>
-import { searchAlgolia } from '../../login/Algolia.js'
+import { searchAlgolia } from '../../plugin/Algolia.js'
 import api from '@/axios/axios'
 import pagination from '../../components/content/pagination.vue'
 import { typeInfo } from '../../data/typeInfo.js'
@@ -350,7 +350,7 @@ export default {
         },
         async getFilterType() {
             try {
-                const response = await api.get('/api/getTypeList')
+                const response = await api.get('/getTypeList')
                 if (response.data.success) {
                     let typeArray = Object.entries(response.data.typeList).map(
                         ([key, value]) => ({
@@ -435,7 +435,7 @@ export default {
             subTypes = [],
         ) {
             try {
-                const response = await api.post('/api/getBookListByOrder', {
+                const response = await api.post('/getBookListByOrder', {
                     dataStart,
                     dataEnd,
                     orderType,
