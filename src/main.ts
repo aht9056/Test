@@ -14,6 +14,11 @@ import 'bootstrap-vue/dist/bootstrap-vue.css'
 // 引入 Element UI 组件
 import '@/plugin/elementUi.js'
 import customSwal from '@/plugin/sweetalert2'
+
+//引入fortawesome
+import '@fortawesome/fontawesome-free/css/all.css'
+import '@fortawesome/fontawesome-free/js/all.js'
+
 import { onAuthStateChanged } from 'firebase/auth'
 const firebaseModule = require('@/login/firebase.js')
 const auth = firebaseModule.auth

@@ -116,7 +116,7 @@ button:not(.button_design):hover {
             var(--color-content-background),
             var(--color-content-background)
         ),
-        linear-gradient(45deg, var(--color-secondary), var(--color-primary));
+        linear-gradient(45deg, var(--color-primary-light), var(--color-primary));
     &.selected {
         color: var(--color-primary);
     }

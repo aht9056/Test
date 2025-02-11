@@ -1,5 +1,5 @@
 <template>
-    <div class="hello">
+    <div class="container">
         <div
             id="carouselExampleDark"
             class="carousel carousel-dark slide"
@@ -30,7 +30,7 @@
             <div class="carousel-inner">
                 <div class="carousel-item active" data-bs-interval="10000">
                     <img
-                        src="../assets/logo.png"
+                        src="../assets/2674559.gif"
                         class="d-block w-100"
                         alt="圖1"
                     />
@@ -44,7 +44,7 @@
                 </div>
                 <div class="carousel-item" data-bs-interval="2000">
                     <img
-                        src="../assets/logo.png"
+                        src="../assets/2674559.gif"
                         class="d-block w-100"
                         alt="圖2"
                     />
@@ -58,7 +58,7 @@
                 </div>
                 <div class="carousel-item">
                     <img
-                        src="../assets/logo.png"
+                        src="../assets/2674559.gif"
                         class="d-block w-100"
                         alt="圖3"
                     />
@@ -96,8 +96,47 @@
                 <span class="visually-hidden">Next</span>
             </button>
         </div>
-        <div class="container-fluid">
+        <div class="container">
             <div class="row">
+                <div class="col-lg-7 col-12 mt-4">
+                    <div class="h3 title">
+                        消息專區&ensp;<i class="fas fa-bullhorn"></i>
+                    </div>
+                    <div class="area">
+                        <BulletinBoard />
+                    </div>
+                </div>
+                <div class="col-lg-5 col-12 mt-4">
+                    <div class="h3 title">
+                        熱門類型&ensp;<i class="fas fa-search"></i>
+                    </div>
+                    <div class="area">
+                        <PopularSearches />
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="container mt-4">
+            <div>
+                <div class="h3 title">
+                    新書推薦&ensp;<i class="fas fa-book"></i>
+                </div>
+                <div class="area">
+                    <GlideCarousel />
+                </div>
+            </div>
+        </div>
+        <div class="container mt-4 mb-4">
+            <div class="mt-4">
+                <div class="h3 title">
+                    暢銷排行&ensp;<i class="fas fa-fire-alt"></i>
+                </div>
+                <div class="area">
+                    <GlideCarousel />
+                </div>
+            </div>
+            <!-- <div class="row">
                 <div
                     class="col-6 col-p2"
                     style="height: 600px; background-color: blue"
@@ -116,9 +155,8 @@
                     台南網頁設計｜高雄網頁設計｜屏東網頁設計｜嘉義網頁設計｜苗栗網頁設計｜台中網頁設計｜彰化網頁設計
                     台北網頁設計｜桃園網頁設計｜新竹網頁設計｜南投網頁設計｜花蓮網頁設計｜台東網頁設計｜雲林網頁設計
                 </div>
-            </div>
+            </div> -->
         </div>
-        <h3>Ecosystem</h3>
         <ul>
             <li>
                 <a
@@ -318,13 +356,20 @@
                 >
             </li>
         </ul>
+        -->
     </div>
 </template>
 
 <script>
+import GlideCarousel from '@/components/GlideCarousel.vue'
+import BulletinBoard from '@/components/BulletinBoard.vue'
+import PopularSearches from '@/components/PopularSearches.vue'
 export default {
+    components: { GlideCarousel, BulletinBoard, PopularSearches },
     data() {
-        return {}
+        return {
+            topTypes: [],
+        }
     },
     mounted() {
         window.addEventListener('scroll', this.handleScroll)
@@ -356,10 +401,23 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
+.carousel {
+    margin-top: 15px;
+    border-radius: 10px;
+    box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.5);
+}
 .carousel-item img {
+    border-radius: 8px;
     max-height: 500px; /* 限制最大高度 */
     width: auto; /* 自适应宽度 */
     margin: 0 auto; /* 居中 */
+}
+.area {
+    box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.5);
+}
+.title {
+    color: var(--color-primary);
+    border-bottom: 1px solid rgba(206, 201, 201, 0.722);
 }
 h3 {
     margin: 40px 0 0;
